@@ -1468,7 +1468,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
 
 <script is:inline>
   // ── Countdown ──
-  const LAUNCH = new Date('2026-05-15T00:00:00-04:00');
+  const LAUNCH = new Date('2026-05-15T18:30:00-04:00');
   function updateCountdown() {
     const diff = Math.max(0, LAUNCH - new Date());
     document.getElementById('cd-d').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
