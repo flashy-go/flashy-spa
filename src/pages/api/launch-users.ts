@@ -2,6 +2,53 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const email = url.searchParams.get('email');
+
+  if (!email) {
+    return new Response(JSON.stringify({ error: 'El correo electrónico es requerido.' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const searchParams = new URLSearchParams({
+    'filter[email][_eq]': email,
+    'fields': 'id,email,registered',
+    'limit': '1',
+  });
+
+  try {
+    const searchRes = await fetch(`https://directus.flashygo.com/items/launch_users?${searchParams}`, {
+      headers: { 'Authorization': `Bearer rNF7XpKI30C3lXzaDAEVHULZEhJcY8Ti` },
+    });
+
+    if (!searchRes.ok) {
+      const errorText = await searchRes.text();
+      console.error('Directus search error:', errorText);
+      return new Response(JSON.stringify({ exists: false }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const searchData = await searchRes.json();
+    const record = searchData?.data?.[0];
+
+    return new Response(JSON.stringify({ exists: !!record, record: record || null }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    console.error('Error checking email:', err);
+    return new Response(JSON.stringify({ exists: false }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+};
+
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json().catch(() => null);
 

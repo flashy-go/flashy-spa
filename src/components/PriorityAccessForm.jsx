@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 function PriorityAccessForm() {
   const [email, setEmail] = useState('');
@@ -9,13 +9,17 @@ function PriorityAccessForm() {
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(60);
   const [downloadEnabled, setDownloadEnabled] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
+  const [checking, setChecking] = useState(false);
   const intervalRef = useRef(null);
+  const checkTimeoutRef = useRef(null);
 
   const PLAY_STORE_URL = 'https://play.google.com/apps/testing/com.flashygo.app';
 
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (checkTimeoutRef.current) clearTimeout(checkTimeoutRef.current);
     };
   }, []);
 
@@ -33,10 +37,44 @@ function PriorityAccessForm() {
     return true;
   }
 
+  const checkEmailExists = useCallback(async (emailValue) => {
+    if (!emailValue || !validateEmail(emailValue)) {
+      setEmailExists(false);
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const res = await fetch(`/api/launch-users?email=${encodeURIComponent(emailValue)}`);
+      const data = await res.json();
+      setEmailExists(data.exists === true);
+    } catch (err) {
+      console.error('Error checking email:', err);
+      setEmailExists(false);
+    } finally {
+      setChecking(false);
+    }
+  }, []);
+
   function handleEmailChange(e) {
     const value = e.target.value;
     setEmail(value);
+    setEmailExists(false);
     if (emailError) validateEmail(value);
+
+    // Debounced check
+    if (checkTimeoutRef.current) clearTimeout(checkTimeoutRef.current);
+    if (value && validateEmail(value)) {
+      checkTimeoutRef.current = setTimeout(() => {
+        checkEmailExists(value);
+      }, 600);
+    }
+  }
+
+  function handleEmailBlur() {
+    if (email && validateEmail(email)) {
+      checkEmailExists(email);
+    }
   }
 
   function startCountdown() {
@@ -84,7 +122,23 @@ function PriorityAccessForm() {
   }
 
   async function handleDownload() {
-    if (!downloadEnabled || !email) return;
+    if (!email) return;
+
+    try {
+      await fetch('/api/launch-users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+    } catch (err) {
+      console.error('Error updating registered status:', err);
+    }
+
+    window.open(PLAY_STORE_URL, '_blank');
+  }
+
+  async function handleDownloadFromExisting() {
+    if (!email) return;
 
     try {
       await fetch('/api/launch-users', {
@@ -237,23 +291,35 @@ function PriorityAccessForm() {
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40 text-xl">mail</span>
           <input
             id="priority-email"
-            className={`w-full bg-surface-container-high border-2 focus:ring-2 focus:ring-primary/30 rounded-lg text-on-surface pl-10 pr-4 py-3.5 placeholder:text-on-surface-variant/30 outline-none transition-all ${
-              emailError ? 'border-error' : 'border-transparent focus:border-primary/40'
+            className={`w-full bg-surface-container-high border-2 focus:ring-2 focus:ring-primary/30 rounded-lg text-on-surface pl-10 pr-10 py-3.5 placeholder:text-on-surface-variant/30 outline-none transition-all ${
+              emailError ? 'border-error' : emailExists ? 'border-green-500/40' : 'border-transparent focus:border-primary/40'
             }`}
             placeholder="tucorreo@gmail.com"
             type="email"
             name="email"
             value={email}
             onChange={handleEmailChange}
-            onBlur={() => email && validateEmail(email)}
+            onBlur={handleEmailBlur}
             required
             autoComplete="email"
           />
+          {checking && (
+            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xl animate-spin" style={{ animationDuration: '1s' }}>progress_activity</span>
+          )}
+          {!checking && emailExists && (
+            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-green-400 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+          )}
         </div>
         {emailError && (
           <div className="flex items-center gap-1.5 px-1">
             <span className="material-symbols-outlined text-error text-xs">error</span>
             <p className="text-error text-xs">{emailError}</p>
+          </div>
+        )}
+        {!emailError && emailExists && (
+          <div className="flex items-center gap-1.5 px-1">
+            <span className="material-symbols-outlined text-green-400 text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            <p className="text-green-400 text-xs">Este correo ya está registrado. Puedes descargar la app directamente.</p>
           </div>
         )}
       </div>
@@ -266,19 +332,32 @@ function PriorityAccessForm() {
         </div>
       )}
 
-      {/* Submit button */}
-      <button
-        className="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-headline font-black text-lg uppercase tracking-widest rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(255,145,90,0.3)]"
-        type="submit"
-        disabled={submitting || !email}
-      >
-        <span className="flex items-center justify-center gap-2">
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
-            {submitting ? 'progress_activity' : 'send'}
+      {/* Conditional: Download button if email exists, Submit button otherwise */}
+      {emailExists ? (
+        <button
+          className="w-full py-4 bg-gradient-to-br from-green-500 to-green-600 text-white font-headline font-black text-lg uppercase tracking-widest rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-green-500/25 hover:from-green-400 hover:to-green-500 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)]"
+          type="button"
+          onClick={handleDownloadFromExisting}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
+            Descargar la App
           </span>
-          {submitting ? 'Enviando...' : 'Enviar'}
-        </span>
-      </button>
+        </button>
+      ) : (
+        <button
+          className="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-headline font-black text-lg uppercase tracking-widest rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_30px_rgba(255,145,90,0.3)]"
+          type="submit"
+          disabled={submitting || !email || checking}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+              {submitting ? 'progress_activity' : checking ? 'progress_activity' : 'send'}
+            </span>
+            {submitting ? 'Enviando...' : checking ? 'Verificando...' : 'Enviar'}
+          </span>
+        </button>
+      )}
     </form>
   );
 }
