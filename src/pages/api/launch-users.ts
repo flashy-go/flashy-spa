@@ -24,11 +24,11 @@ export const POST: APIRoute = async ({ request }) => {
   const directusUrl = import.meta.env.PUBLIC_DIRECTUS_URL;
   const directusToken = import.meta.env.DIRECTUS_TOKEN;
 
-  const res = await fetch(`${directusUrl}/items/launch_users`, {
+  const res = await fetch(`https://directus.flashygo.com/items/launch_users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${directusToken}`,
+      'Authorization': `Bearer rNF7XpKI30C3lXzaDAEVHULZEhJcY8Ti`,
     },
     body: JSON.stringify({
       email: body.email,
@@ -95,8 +95,8 @@ export const PATCH: APIRoute = async ({ request }) => {
     'limit': '1',
   });
 
-  const searchRes = await fetch(`${directusUrl}/items/launch_users?${searchParams}`, {
-    headers: { 'Authorization': `Bearer ${directusToken}` },
+  const searchRes = await fetch(`https://directus.flashygo.com/items/launch_users?${searchParams}`, {
+    headers: { 'Authorization': `Bearer rNF7XpKI30C3lXzaDAEVHULZEhJcY8Ti` },
   });
 
   if (!searchRes.ok) {

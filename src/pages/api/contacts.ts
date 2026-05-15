@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
+  
   return new Response(JSON.stringify({ message: 'Registro exitoso' }), {
     status: 201,
     headers: { 'Content-Type': 'application/json' },
