@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import UmamiAnalytics from '../components/UmamiAnalytics.astro';
 ---
 
 <html class="dark" lang="es-VE">
@@ -79,6 +80,8 @@ import '../styles/global.css'
 				},
 			}
 		</script>
+		<!-- Umami Analytics -->
+		<UmamiAnalytics />
         <style>
             .policy-content h2 {
                 @apply font-headline text-3xl font-bold text-primary mt-12 mb-6 tracking-tight;
@@ -192,7 +195,7 @@ import '../styles/global.css'
                         <li><strong>Por motivos legales:</strong> Podemos compartir información con autoridades gubernamentales o policiales si es requerido por ley o para investigar incidentes de seguridad durante un viaje.</li>
                     </ul>
 
-                    <h3>4. Seguridad de los Datos</h3>
+                    <h3 id="4-seguridad-de-los-datos">4. Seguridad de los Datos</h3>
                     <p>Tus datos, incluyendo las fotografías de documentos y ubicación, se transmiten de forma encriptada a nuestros servidores. Los documentos de identidad no son públicos y solo son accesibles por nuestro equipo interno de validación.</p>
 
                     <h3>5. Retención y Eliminación de Datos</h3>

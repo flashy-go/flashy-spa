@@ -1,0 +1,614 @@
+---
+import UmamiAnalytics from '../../components/UmamiAnalytics.astro';
+
+export const prerender = false;
+
+const { code } = Astro.params;
+const directusUrl = process.env.DIRECTUS_URL ?? process.env.PUBLIC_DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
+const directusToken = process.env.DIRECTUS_TOKEN ?? import.meta.env.DIRECTUS_TOKEN;
+
+let coupon: any = null;
+try {
+  const url = `${directusUrl}/items/coupons?filter[status][_eq]=published&filter[code][_eq]=${encodeURIComponent(code)}&limit=1&fields=id,code,status,business_reference`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${directusToken}` } });
+  if (res.ok) {
+    const json = await res.json();
+    coupon = json.data?.[0] ?? null;
+  }
+} catch (_) {}
+
+if (!coupon) Astro.response.status = 404;
+---
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{coupon ? `Cupón ${coupon.code} — 50% OFF en Flashy` : 'Cupón no encontrado — Flashy'}</title>
+  <meta name="description" content={coupon
+    ? `${coupon.business_reference ? `Cupón cortesía de ${coupon.business_reference}. ` : ''}Obtén 50% de descuento en tu primer viaje con Flashy, la app de mototaxis de Puerto Cabello.`
+    : 'Este cupón no es válido o ya venció.'
+  } />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href={`https://flashygo.com/cupon/${code}`} />
+  <meta name="theme-color" content="#FF6A0D" />
+  <link rel="icon" type="image/png" href="/flashy-favicon.png" />
+  <meta property="og:title" content={coupon ? `Tu cupón ${coupon.code} — 50% OFF en Flashy` : 'Cupón no encontrado — Flashy'} />
+  <meta property="og:description" content={coupon
+    ? `${coupon.business_reference ? `Cortesía de ${coupon.business_reference}. ` : ''}50% OFF en tu primer viaje con Flashy.`
+    : 'Este cupón no es válido.'
+  } />
+  <meta property="og:image" content="https://flashygo.com/og-flashy.png" />
+  <meta property="og:url" content={`https://flashygo.com/cupon/${code}`} />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_VE" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <UmamiAnalytics />
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <img src="/flashy-word-logo.png" alt="Flashy" width="130" />
+    </a>
+    <a href="/" class="btn-back">← Inicio</a>
+  </div>
+</nav>
+
+{coupon ? (
+<main class="cupon-main">
+
+  <!-- ── TICKET VIEW (default) ── -->
+  <div id="ticket-view" class="view-panel">
+    <div class="meta-row">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        LANZAMIENTO 15 MAYO 2026
+      </div>
+      {coupon.business_reference && (
+        <div class="courtesy-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></svg>
+          Cortesía de <strong>{coupon.business_reference}</strong>
+        </div>
+      )}
+    </div>
+
+    <div class="ticket-wrap">
+      <div class="ticket">
+        <!-- LEFT -->
+        <div class="ticket-left">
+          <img src="/flashy-word-logo.png" alt="Flashy" class="ticket-logo" />
+          {coupon.business_reference && (
+            <span class="ticket-courtesy">Cortesía de {coupon.business_reference}</span>
+          )}
+          <div class="ticket-code-block">
+            <span class="ticket-code-label">TU CÓDIGO</span>
+            <span class="ticket-code">{coupon.code}</span>
+          </div>
+          <span class="ticket-valid">Válido desde el 15 de mayo · 2026</span>
+        </div>
+
+        <!-- PERFORATED DIVIDER -->
+        <div class="ticket-perf">
+          <div class="ticket-notch ticket-notch-top"></div>
+          <div class="ticket-notch ticket-notch-bottom"></div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="ticket-right">
+          <span class="ticket-off-label">EN TU PRIMER VIAJE</span>
+          <span class="ticket-off">50%<br/>OFF</span>
+          <span class="ticket-app">app Flashy</span>
+        </div>
+      </div>
+      <div class="ticket-glow"></div>
+    </div>
+
+    <div class="cta-block">
+      <button class="btn-cta" id="cupon-cta-btn" data-code={coupon.code}>
+        Reclamar mi descuento de 50% →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── FORM VIEW (hidden until CTA click) ── -->
+  <div id="form-view" class="view-panel view-hidden">
+    <div class="form-header">
+      <div class="form-code-badge">{coupon.code} · 50% OFF</div>
+      <h2 class="form-title">Activa tu cupón</h2>
+      <p class="form-sub">Regístrate gratis · te avisamos por WhatsApp el 15 de mayo</p>
+    </div>
+
+    <form id="reg-form" class="reg-form">
+      <div class="form-tabs">
+        <button type="button" class="tab-btn active" data-tab="pasajero">Soy pasajero</button>
+        <button type="button" class="tab-btn" data-tab="chofer">Soy mototaxista</button>
+      </div>
+
+      <div id="form-fields">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input class="form-input" name="nombre" required placeholder="Cómo te llamas" autocomplete="given-name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono / WhatsApp</label>
+          <input class="form-input" name="telefono" type="tel" required placeholder="+58 412 000 0000" autocomplete="tel" />
+        </div>
+        <div class="form-group tab-panel" data-panel="pasajero">
+          <label class="form-label">Zona donde vives</label>
+          <input class="form-input" name="zona" placeholder="Ej: Centro, La Belisa, Cumboto..." />
+        </div>
+        <div class="form-group tab-panel form-hidden" data-panel="chofer">
+          <label class="form-label">Email</label>
+          <input class="form-input" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
+        </div>
+        <input type="hidden" name="cupon" value={coupon.code} />
+        <button type="submit" class="btn-submit" id="submit-btn">
+          Reclamar cupón →
+        </button>
+        <p class="form-disclaimer">🔒 Solo te escribimos para el lanzamiento</p>
+        <div id="form-error" class="form-error form-hidden">
+          ⚠️ Hubo un problema. Por favor intenta de nuevo.
+        </div>
+      </div>
+
+      <div id="form-success" class="form-success form-hidden">
+        <div class="success-icon">🎟️</div>
+        <div class="success-title">¡Cupón aplicado con éxito!</div>
+        <div class="success-sub">A partir del 15 de mayo podrás utilizarlo en tu primer viaje con Flashy.</div>
+      </div>
+    </form>
+  </div>
+
+</main>
+) : (
+<main class="cupon-main">
+  <div class="not-found">
+    <div class="nf-num">404</div>
+    <h1 class="nf-title">Cupón no encontrado</h1>
+    <p class="nf-sub">Este enlace no es válido o el cupón ya venció. Escanea de nuevo el código QR.</p>
+    <a href="/" class="btn-cta" style="text-decoration:none">Ir al inicio →</a>
+  </div>
+</main>
+)}
+
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --accent:      #FF6A0D;
+    --accent-deep: #E8540A;
+    --bg:          #0A0A0B;
+    --bg-soft:     #111114;
+    --ink:         #FAFAF7;
+    --muted:       rgba(255,255,255,0.65);
+    --border:      rgba(255,255,255,0.08);
+    --font-body:   'DM Sans', -apple-system, sans-serif;
+    --font-display:'Outfit', sans-serif;
+    --font-hero:   'Bebas Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* subtle grid bg */
+    background-image: linear-gradient(var(--border) 1px,transparent 1px), linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  .form-hidden { display: none !important; }
+
+  /* ── NAV ── */
+  #main-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,11,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 600px; margin: 0 auto; padding: 0 20px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand { display: flex; align-items: center; text-decoration: none; }
+  .nav-brand img { height: 28px; width: auto; }
+  .btn-back {
+    padding: 9px 18px;
+    background: transparent; color: var(--ink);
+    border: 1px solid rgba(255,255,255,0.2);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; font-family: var(--font-body);
+    transition: all 0.2s; border-radius: 6px; text-decoration: none;
+    display: inline-flex; align-items: center;
+  }
+  .btn-back:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  /* ── MAIN LAYOUT ── */
+  .cupon-main {
+    height: calc(100dvh - 60px);
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  /* ── VIEW PANELS ── */
+  .view-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    gap: 20px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    overflow-y: auto;
+  }
+  .view-hidden {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    pointer-events: none;
+  }
+
+  /* ── META ROW (badge + courtesy pill) ── */
+  .meta-row {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+  }
+  .badge-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    border: 1px solid rgba(255,106,13,0.35);
+    background: rgba(255,106,13,0.06);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+    border-radius: 4px;
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1.5s steps(2) infinite;
+  }
+  .courtesy-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px; font-size: 13px; color: var(--muted);
+  }
+  .courtesy-pill svg { color: var(--accent); flex-shrink: 0; }
+  .courtesy-pill strong { color: var(--ink); font-weight: 600; }
+
+  /* ── TICKET CARD ── */
+  .ticket-wrap {
+    position: relative;
+    width: 100%; max-width: 460px;
+    animation: floatIn 0.6s ease both, floatY 4s ease-in-out 0.6s infinite;
+  }
+  .ticket {
+    display: grid;
+    grid-template-columns: 1.3fr 1px 1fr;
+    background: var(--bg-soft);
+    border: 1.5px dashed rgba(255,106,13,0.45);
+    border-radius: 14px;
+    overflow: visible;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 32px 64px rgba(0,0,0,0.55);
+    position: relative;
+  }
+
+  .ticket-left {
+    padding: 26px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    align-items: flex-start; justify-content: center;
+    border-radius: 13px 0 0 13px;
+  }
+  .ticket-logo { height: 26px; width: auto; }
+  .ticket-courtesy { font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.3; }
+  .ticket-code-block { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+  .ticket-code-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.22em;
+    color: var(--accent); text-transform: uppercase;
+  }
+  .ticket-code {
+    font-family: 'Courier New', monospace;
+    font-size: 15px; font-weight: 700; color: var(--ink);
+    background: rgba(255,106,13,0.08); border: 1px solid rgba(255,106,13,0.2);
+    padding: 8px 12px; letter-spacing: 0.1em; border-radius: 4px;
+    word-break: break-all;
+  }
+  .ticket-valid { font-size: 11px; color: rgba(255,255,255,0.28); letter-spacing: 0.02em; }
+
+  /* Perforated divider */
+  .ticket-perf {
+    width: 1px; position: relative;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,106,13,0.38) 0, rgba(255,106,13,0.38) 5px,
+      transparent 5px, transparent 10px
+    );
+  }
+  .ticket-notch {
+    position: absolute; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px dashed rgba(255,106,13,0.4);
+    left: 50%; transform: translateX(-50%); z-index: 2;
+  }
+  .ticket-notch-top    { top: -9px; }
+  .ticket-notch-bottom { bottom: -9px; }
+
+  .ticket-right {
+    padding: 26px 20px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(255,106,13,0.07), transparent);
+    border-radius: 0 13px 13px 0;
+  }
+  .ticket-off-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.18em;
+    color: rgba(255,106,13,0.6); text-align: center; text-transform: uppercase;
+  }
+  .ticket-off {
+    font-family: var(--font-hero);
+    font-size: clamp(52px, 13vw, 76px);
+    line-height: 0.88; color: var(--accent); text-align: center;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 40px rgba(255,106,13,0.45);
+  }
+  .ticket-app { font-size: 12px; color: var(--muted); font-style: italic; }
+
+  /* Glow under ticket */
+  .ticket-glow {
+    position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+    width: 70%; height: 40px;
+    background: radial-gradient(ellipse at center, rgba(255,106,13,0.5), transparent 70%);
+    filter: blur(14px); pointer-events: none; z-index: -1;
+  }
+
+  /* ── CTA BLOCK ── */
+  .cta-block {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    width: 100%; max-width: 460px;
+  }
+  .btn-cta {
+    width: 100%; padding: 17px 24px;
+    background: var(--accent); color: #0A0A0B;
+    border: none; cursor: pointer; font-family: var(--font-body);
+    font-weight: 800; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    position: relative; overflow: hidden;
+  }
+  .btn-cta::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.14), transparent);
+    pointer-events: none;
+  }
+  .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(255,106,13,0.4); background: #FF7A25; }
+  .btn-cta:active { transform: translateY(0); }
+
+  .trust-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: rgba(255,255,255,0.4);
+    flex-wrap: wrap; justify-content: center;
+  }
+  .trust-dot { color: rgba(255,255,255,0.15); }
+
+  /* ── FORM VIEW ── */
+  .form-header {
+    text-align: center;
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+    width: 100%; max-width: 420px;
+  }
+  .form-code-badge {
+    display: inline-flex; align-items: center;
+    padding: 5px 14px; border-radius: 100px;
+    background: rgba(255,106,13,0.1); border: 1px solid rgba(255,106,13,0.25);
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.1em; font-family: 'Courier New', monospace;
+  }
+  .form-title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 6vw, 34px);
+    font-weight: 800; letter-spacing: -0.03em; color: var(--ink);
+  }
+  .form-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── REG FORM ── */
+  .reg-form {
+    width: 100%; max-width: 420px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 10px; padding: 28px 24px;
+  }
+  .form-tabs {
+    display: flex; margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;
+  }
+  .tab-btn {
+    flex: 1; padding: 12px 10px; border: none; cursor: pointer;
+    background: transparent; color: rgba(255,255,255,0.45);
+    font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--accent); color: #0A0A0B; }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: 9px; letter-spacing: 0.15em; font-weight: 700;
+    color: rgba(255,255,255,0.4); margin-bottom: 7px; text-transform: uppercase;
+  }
+  .form-input {
+    width: 100%; padding: 13px 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03); color: #fff;
+    font-size: 15px; font-family: var(--font-body); outline: none;
+    transition: border-color 0.2s; border-radius: 4px;
+  }
+  .form-input:focus { border-color: var(--accent); background: rgba(255,106,13,0.04); }
+  .form-input::placeholder { color: rgba(255,255,255,0.22); }
+  .btn-submit {
+    width: 100%; padding: 16px 24px; margin-top: 4px;
+    background: var(--accent); color: #0A0A0B;
+    border: none; cursor: pointer; font-family: var(--font-body);
+    font-weight: 800; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 6px; transition: transform 0.18s, box-shadow 0.18s;
+    position: relative; overflow: hidden;
+  }
+  .btn-submit::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+    pointer-events: none;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(255,106,13,0.35); }
+  .form-disclaimer { margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.3); text-align: center; }
+  .form-error {
+    margin-top: 12px; padding: 12px 16px; border-radius: 6px;
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+    color: #fca5a5; font-size: 13px; text-align: center;
+  }
+  .form-success {
+    padding: 32px 20px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .success-icon { font-size: 44px; }
+  .success-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--ink); }
+  .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 320px; }
+
+  /* ── 404 VIEW ── */
+  .not-found {
+    width: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 60px 24px; gap: 20px;
+  }
+  .nf-num {
+    font-family: var(--font-hero);
+    font-size: clamp(100px, 20vw, 180px);
+    line-height: 1; color: rgba(255,255,255,0.04);
+  }
+  .nf-title { font-family: var(--font-display); font-size: clamp(24px, 5vw, 36px); font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+  .nf-sub { font-size: 15px; color: var(--muted); max-width: 380px; line-height: 1.6; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes blink   { 0%,49%{opacity:1} 50%,100%{opacity:0.3} }
+  @keyframes floatIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes floatY  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .view-panel { padding: 16px 16px; gap: 14px; }
+    .ticket-left { padding: 18px 16px; gap: 8px; }
+    .ticket-right { padding: 18px 14px; }
+    .ticket-code { font-size: 12px; padding: 5px 8px; }
+    .ticket-logo { height: 20px; }
+    .courtesy-pill { font-size: 12px; }
+    .reg-form { padding: 20px 16px; }
+    .form-title { font-size: 22px; }
+  }
+
+  /* Very small screens — shrink ticket further */
+  @media (max-height: 720px) {
+    .meta-row { gap: 6px; }
+    .view-panel { gap: 12px; padding: 16px; }
+    .badge-pill { font-size: 9px; padding: 5px 10px; }
+    .ticket-left { padding: 18px 16px; gap: 7px; }
+    .ticket-right { padding: 18px 14px; }
+    .ticket-logo { height: 22px; }
+    .ticket-off { font-size: clamp(42px, 11vw, 58px); }
+    .ticket-code { font-size: 12px; padding: 6px 10px; }
+    .cta-block { gap: 8px; }
+    .btn-cta { padding: 14px 20px; font-size: 13px; }
+  }
+</style>
+
+<script is:inline>
+  // ── CTA → swap ticket for form ──
+  const ctaBtn = document.getElementById('cupon-cta-btn');
+  const ticketView = document.getElementById('ticket-view');
+  const formView   = document.getElementById('form-view');
+
+  if (ctaBtn && ticketView && formView) {
+    ctaBtn.addEventListener('click', () => {
+      if (typeof umami !== 'undefined') {
+        umami.track('cupon-cta-click', { code: ctaBtn.dataset.code });
+      }
+      ticketView.classList.add('view-hidden');
+      formView.classList.remove('view-hidden');
+      // focus first input after transition
+      setTimeout(() => {
+        const firstInput = formView.querySelector('input:not([type=hidden])');
+        if (firstInput) firstInput.focus();
+      }, 420);
+    });
+  }
+
+  // ── Form tabs ──
+  function setTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      const show = p.dataset.panel === tab;
+      p.classList.toggle('form-hidden', !show);
+      const inp = p.querySelector('input');
+      if (inp) inp.required = show && inp.name === 'email';
+    });
+    const sub = document.getElementById('submit-btn');
+    if (sub) sub.textContent = tab === 'pasajero' ? 'Reclamar cupón →' : 'Quiero ser conductor →';
+  }
+  document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
+  // ── Form submit ──
+  const form = document.getElementById('reg-form');
+  const submitBtn = document.getElementById('submit-btn');
+
+  if (form && submitBtn) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name    = fd.get('nombre')   || '';
+      const phone   = fd.get('telefono') || '';
+      const email   = fd.get('email')    || '';
+      const zone    = fd.get('zona')     || '';
+      const cupon   = fd.get('cupon')    || '';
+      const tab     = document.querySelector('.tab-btn.active').dataset.tab;
+      const interest = tab === 'pasajero' ? 'Pasajero' : 'Motorizado';
+
+      const orig = submitBtn.textContent;
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      if (typeof umami !== 'undefined') {
+        umami.track('cupon-form-submit', { code: cupon, interest });
+      }
+
+      try {
+        const res = await fetch('/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, email, interest, zone, cupon }),
+        });
+        if (!res.ok) throw new Error();
+
+        if (typeof umami !== 'undefined') {
+          umami.track('cupon-form-success', { code: cupon, interest });
+        }
+
+        document.getElementById('form-fields').classList.add('form-hidden');
+        document.getElementById('form-success').classList.remove('form-hidden');
+      } catch {
+        const err = document.getElementById('form-error');
+        if (err) { err.classList.remove('form-hidden'); setTimeout(() => err.classList.add('form-hidden'), 5000); }
+      } finally {
+        submitBtn.textContent = orig;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

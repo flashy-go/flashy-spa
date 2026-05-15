@@ -1,0 +1,8 @@
+---
+const scriptUrl = process.env.PUBLIC_UMAMI_SCRIPT_URL ?? import.meta.env.PUBLIC_UMAMI_SCRIPT_URL;
+const websiteId = process.env.PUBLIC_UMAMI_WEBSITE_ID ?? import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+---
+
+{scriptUrl && websiteId && (
+  <script is:inline defer src={scriptUrl} data-website-id={websiteId}></script>
+)}

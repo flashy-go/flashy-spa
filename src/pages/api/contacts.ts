@@ -5,15 +5,32 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json().catch(() => null);
 
-  if (!body || !body.name || !body.phone || !body.email || !body.interest) {
-    return new Response(JSON.stringify({ error: 'Campos incompletos.' }), {
+  if (!body || !body.name || !body.phone || !body.interest) {
+    return new Response(JSON.stringify({ error: 'Campos básicos incompletos (nombre, teléfono o interés).' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  const directusUrl = import.meta.env.PUBLIC_DIRECTUS_URL;
-  const directusToken = import.meta.env.DIRECTUS_TOKEN;
+  if (body.interest === 'Motorizado' && !body.email) {
+    return new Response(JSON.stringify({ error: 'El email es obligatorio para registrarse como motorizado.' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const directusUrl = process.env.DIRECTUS_URL ?? process.env.PUBLIC_DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
+  const directusToken = process.env.DIRECTUS_TOKEN ?? import.meta.env.DIRECTUS_TOKEN;
+
+  const payload: any = {
+    name: body.name,
+    phone: body.phone,
+    interest: body.interest,
+  };
+
+  if (body.email) payload.email = body.email;
+  if (body.zone) payload.zone = body.zone;
+  if (body.cupon) payload.cupon = body.cupon;
 
   const res = await fetch(`${directusUrl}/items/page_contacts`, {
     method: 'POST',
@@ -21,13 +38,7 @@ export const POST: APIRoute = async ({ request }) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${directusToken}`,
     },
-    body: JSON.stringify({
-      name: body.name,
-      phone: body.phone,
-      email: body.email,
-      interest: body.interest,
-      ...(body.cupon ? { cupon: body.cupon } : {}),
-    }),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
