@@ -6,7 +6,7 @@ if (cuponParam) {
   return Astro.redirect(`/cupon/${encodeURIComponent(cuponParam)}`, 302);
 }
 
-const redirectToPriority = (import.meta.env.REDIRECT_TO_PRIORITY_ACCESS || '').toLowerCase() === 'true';
+const redirectToPriority = (process.env.REDIRECT_TO_PRIORITY_ACCESS || '').toLowerCase() === 'true';
 if (redirectToPriority) {
   return Astro.redirect('https://flashygo.com/acceso-prioritario', 302);
 }
