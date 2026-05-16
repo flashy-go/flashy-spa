@@ -1,18 +1,22 @@
 ---
 import UmamiAnalytics from '../components/UmamiAnalytics.astro';
 
-const cuponParam = Astro.url.searchParams.get('cupon');
-if (cuponParam) {
-  return Astro.redirect(`/cupon/${encodeURIComponent(cuponParam)}`, 302);
-}
+const downloadUrl = import.meta.env.PUBLIC_DOWNLOAD_URL || '#';
 
-const redirectToPriority = (process.env.REDIRECT_TO_PRIORITY_ACCESS || '').toLowerCase() === 'true';
-if (redirectToPriority) {
-  return Astro.redirect('https://flashygo.com/acceso-prioritario', 302);
-}
+// Fetch registered users count from Directus
+const directusUrl = process.env.DIRECTUS_URL ?? process.env.PUBLIC_DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
+const directusToken = process.env.DIRECTUS_TOKEN ?? import.meta.env.DIRECTUS_TOKEN;
 
-const registeredCount = import.meta.env.PUBLIC_REGISTERED_COUNT || '300';
-const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
+let registeredCount = 0;
+try {
+  const res = await fetch(`${directusUrl}/items/page_contacts?fields=id&meta=total_count&limit=0`, {
+    headers: { Authorization: `Bearer ${directusToken}` },
+  });
+  if (res.ok) {
+    const json = await res.json();
+    registeredCount = Number(json.meta?.total_count) || 0;
+  }
+} catch (_) {}
 ---
 <html lang="es">
 <head>
@@ -29,7 +33,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
   <link rel="icon" type="image/png" href="/flashy-favicon.png" />
   <!-- Open Graph -->
   <meta property="og:title" content="Flashy — La primera app de mototaxis de Puerto Cabello" />
-  <meta property="og:description" content="Pide, súbete, llega. Sin esperas, sin regateos, tarifa clara. Regístrate y obtén 50% OFF en tu primer viaje." />
+  <meta property="og:description" content="Pide, súbete, llega. Sin esperas, sin regateos, tarifa clara. Descarga la app ahora." />
   <meta property="og:image" content="https://flashygo.com/og-flashy.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -63,7 +67,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD",
-      "description": "50% de descuento en el primer viaje para los primeros 1.000 registrados"
+      "description": "Descarga gratuita disponible en App Store y Google Play"
     },
     "areaServed": {
       "@type": "City",
@@ -110,10 +114,10 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "¿Cuándo está disponible la app Flashy?",
+        "name": "¿Dónde descargo la app Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Flashy se lanza oficialmente el 15 de mayo de 2026 en Puerto Cabello. Si te registras ahora, te avisamos por WhatsApp el día del lanzamiento con el enlace de descarga."
+          "text": "Flashy ya está disponible en Puerto Cabello. Descárgala gratis en App Store y Google Play."
         }
       },
       {
@@ -121,7 +125,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
         "name": "¿Cuánto cuesta un viaje con Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas. Y si te registras antes del lanzamiento, tu primer viaje es 50% más barato."
+          "text": "La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas."
         }
       },
       {
@@ -153,7 +157,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
         "name": "Soy mototaxista, ¿cómo me uno a Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Llena el formulario en la página marcando 'Soy mototaxista'. Te contactamos para verificar tus documentos. Los primeros 30 días no cobramos comisión a los conductores fundadores."
+          "text": "Descarga la app y regístrate como conductor. Te contactamos para verificar tus documentos y comenzar a recibir viajes."
         }
       },
       {
@@ -161,7 +165,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
         "name": "¿Flashy llega a otras ciudades de Venezuela?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Empezamos en Puerto Cabello, pero el plan es expandirnos. Si quieres que llegue a tu ciudad, regístrate y déjanos tu zona — nos ayuda a priorizar."
+          "text": "Empezamos en Puerto Cabello, pero el plan es expandirnos a más ciudades de Venezuela pronto."
         }
       }
     ]
@@ -182,10 +186,10 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       <a href="#servicios">Servicios</a>
       <a href="#seguridad">Seguridad</a>
       <a href="#faq">FAQ</a>
-      <a href="/acceso-prioritario">Acceso Prioritario</a>
+
     </div>
     <div class="nav-actions">
-      <button class="btn-primary btn-sm nav-cta-desktop" data-scroll-form="pasajero">Únete →</button>
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-sm nav-cta-desktop">Descargar →</a>
       <button class="nav-hamburger" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
         <span class="ham-line"></span>
         <span class="ham-line"></span>
@@ -200,8 +204,8 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
   <a href="#servicios" class="nav-mobile-link">Servicios</a>
   <a href="#seguridad" class="nav-mobile-link">Seguridad</a>
   <a href="#faq" class="nav-mobile-link">FAQ</a>
-  <a href="/acceso-prioritario" class="nav-mobile-link">Acceso Prioritario</a>
-  <button class="btn-primary btn-full" style="margin-top:12px" data-scroll-form="pasajero">Únete →</button>
+
+  <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-full" style="margin-top:12px">Descargar →</a>
 </div>
 
 <main id="main-content" aria-label="Contenido principal">
@@ -219,7 +223,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
     <div class="hero-copy">
       <div class="badge">
         <span class="badge-dot blink"></span>
-        PUERTO CABELLO · LANZAMIENTO 15 MAYO 2026
+        PUERTO CABELLO · DISPONIBLE AHORA
       </div>
 
       <h1 class="hero-title">
@@ -235,36 +239,24 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       </p>
 
       <div class="hero-btns">
-        <button class="btn-primary btn-lg" data-scroll-form="pasajero">
-          Quiero viajar con Flashy <span>→</span>
-        </button>
-        <button class="btn-outline btn-lg" data-scroll-form="chofer">
-          Soy mototaxista
-        </button>
+        <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
+          Descargar Flashy <span>→</span>
+        </a>
+        <p class="ios-badge">Próximamente en iOS</p>
       </div>
 
-      <div class="countdown">
-        <div class="countdown-label">FALTAN</div>
-        <div class="countdown-cell"><span id="cd-d" class="cd-num">15</span><span class="cd-lbl">DÍAS</span></div>
-        <div class="countdown-cell"><span id="cd-h" class="cd-num">00</span><span class="cd-lbl">HRS</span></div>
-        <div class="countdown-cell"><span id="cd-m" class="cd-num">00</span><span class="cd-lbl">MIN</span></div>
-        <div class="countdown-cell accent-cell"><span id="cd-s" class="cd-num accent">00</span><span class="cd-lbl">SEG</span></div>
-      </div>
-
-      <div class="offer-badge">
-        <span class="offer-tag">OFERTA</span>
-        50% OFF en tu primer viaje · solo primeros 1.000 registrados
-      </div>
-
-      <div class="social-proof">
-        <div class="social-proof-avatars">
-          <span class="sp-avatar">MR</span>
-          <span class="sp-avatar">LC</span>
-          <span class="sp-avatar">AP</span>
-          <span class="sp-avatar">JG</span>
+      {registeredCount > 0 && (
+        <div class="social-proof">
+          <div class="social-proof-avatars">
+            <span class="sp-avatar">MR</span>
+            <span class="sp-avatar">LC</span>
+            <span class="sp-avatar">AP</span>
+            <span class="sp-avatar">JG</span>
+          </div>
+          <span class="social-proof-text">+<strong>{registeredCount.toLocaleString()}</strong> personas ya se registraron</span>
         </div>
-        <span class="social-proof-text">+<strong>{registeredCount}</strong> personas ya se registraron</span>
-      </div>
+      )}
+
     </div>
 
     <div class="phone-wrap">
@@ -315,9 +307,9 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       </div>
     </div>
     <div class="section-cta">
-      <button class="btn-primary btn-lg" data-scroll-form="pasajero">
-        Así de fácil. Regístrate →
-      </button>
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
+        Así de fácil. Descarga la app →
+      </a>
     </div>
   </div>
 </section>
@@ -335,7 +327,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       <div class="cambio-nota">
         <div class="section-label">NOTA DEL EDITOR</div>
         <p style="font-size:17px;color:var(--ink);line-height:1.55;margin:0">
-          En Puerto Cabello pedir un mototaxi sigue siendo igual que hace 20 años. Eso se acaba el <strong class="accent">15 de mayo</strong>.
+          En Puerto Cabello pedir un mototaxi seguía siendo igual que hace 20 años. <strong class="accent">Eso ya cambió.</strong>
         </p>
       </div>
     </div>
@@ -408,10 +400,10 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
           <span class="accent italic">la parte más fácil de tu día</span>
         </p>
       </div>
-      <button class="btn-primary btn-block" data-scroll-form="pasajero">
-        <span>Quiero mi cupo + 50% OFF</span>
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-block">
+        <span>Descargar Flashy ahora</span>
         <span style="font-size:22px">→</span>
-      </button>
+      </a>
     </div>
   </div>
 </section>
@@ -444,9 +436,9 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
   <div class="container" style="position:relative;">
     <div class="section-cta">
       <p class="section-cta-text">Tu seguridad es nuestra prioridad. Viaja tranquilo.</p>
-      <button class="btn-primary btn-lg" data-scroll-form="pasajero">
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
         Quiero viajar seguro →
-      </button>
+      </a>
     </div>
   </div>
 </section>
@@ -518,13 +510,9 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       </div>
     </div>
     <div class="section-cta">
-      <div class="spots-badge">
-        <span class="spots-icon">🔥</span>
-        <span>Solo quedan <strong class="accent">{availableSpots}</strong> cupos disponibles</span>
-      </div>
-      <button class="btn-primary btn-lg" data-scroll-form="pasajero">
-        Sé el primero en probarlo →
-      </button>
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
+        Descarga la app →
+      </a>
     </div>
   </div>
 </section>
@@ -542,9 +530,9 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
         <div class="stat-card reveal"><div class="stat-num">24/7</div><div class="stat-desc">tú decides cuándo prender la app</div></div>
         <div class="stat-card reveal"><div class="stat-num">$</div><div class="stat-desc">pagos al instante, sin esperar semanas</div></div>
       </div>
-      <button class="btn-primary btn-lg" data-scroll-form="chofer">
+      <a href="#conductores" class="btn-primary btn-lg">
         Quiero ser conductor Flashy →
-      </button>
+      </a>
     </div>
     <div class="driver-benefits-card reveal">
       <div class="driver-benefits-title">¿Por qué Flashy?</div>
@@ -559,60 +547,8 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
   </div>
 </section>
 
-<section id="dirA-form" class="section border-b form-section">
-  <div class="form-glow"></div>
-  <div class="container form-grid">
-    <div class="form-copy">
-      <div class="section-label">06 / SÚMATE</div>
-      <h2 class="section-title">Sé el primero<br/>en moverte<br/><span class="accent italic">como Flashy.</span></h2>
-      <p class="section-desc">Regístrate ahora. Te mandamos el enlace de descarga el día del lanzamiento por WhatsApp.</p>
-      <div class="offer-box">
-        <div class="offer-box-label">OFERTA FUNDADOR</div>
-        <div class="offer-box-num">50% OFF</div>
-        <div class="offer-box-desc">en tu primer viaje · solo primeros 1.000 registrados</div>
-      </div>
-    </div>
 
-    <form id="reg-form" class="reg-form" aria-label="Formulario de registro previo al lanzamiento de Flashy">
-      <div class="form-tabs">
-        <button type="button" class="tab-btn active" data-tab="pasajero">Soy pasajero</button>
-        <button type="button" class="tab-btn" data-tab="chofer">Soy mototaxista</button>
-      </div>
 
-      <div id="form-fields">
-        <div class="form-group">
-          <label class="form-label">Nombre</label>
-          <input class="form-input" name="nombre" required placeholder="Cómo te llamas" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Teléfono / WhatsApp</label>
-          <input class="form-input" name="telefono" type="tel" required placeholder="+58 412 000 0000" />
-        </div>
-        <div class="form-group tab-panel" data-panel="pasajero">
-          <label class="form-label">Zona donde vives</label>
-          <input class="form-input" name="zona" placeholder="Ej: Centro, La Belisa, Cumboto..." />
-        </div>
-        <div class="form-group tab-panel hidden" data-panel="chofer">
-          <label class="form-label">Email</label>
-          <input class="form-input" name="email" type="email" placeholder="tucorreo@ejemplo.com" />
-        </div>
-        <button type="submit" class="btn-primary btn-full" id="submit-btn">
-          Reclamar 50% OFF →
-        </button>
-        <p class="form-disclaimer">🔒 Tus datos están seguros · solo te escribimos para el lanzamiento</p>
-        <div id="form-error" class="form-error hidden">
-          <span>⚠️ Hubo un problema al enviar. Por favor intenta de nuevo.</span>
-        </div>
-      </div>
-
-      <div id="form-success" class="form-success hidden">
-        <div style="font-size:48px;margin-bottom:12px">🚀</div>
-        <div class="form-success-title">¡Estás dentro!</div>
-        <div class="form-success-sub">Te avisamos por WhatsApp el día del lanzamiento.</div>
-      </div>
-    </form>
-  </div>
-</section>
 
 <section id="faq" class="section border-b">
   <div class="container faq-container">
@@ -622,13 +558,13 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
     </div>
     <div class="faq-list">
       {[
-        ['¿Cuándo está disponible la app?','Flashy se lanza oficialmente el 15 de mayo de 2026 en Puerto Cabello. Si te registras ahora, te avisamos por WhatsApp el día del lanzamiento con el enlace de descarga.'],
-        ['¿Cuánto cuesta un viaje?','La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas. Y si te registras antes del lanzamiento, tu primer viaje es 50% más barato.'],
+        ['¿Dónde descargo la app?','Flashy ya está disponible en Puerto Cabello. Descárgala gratis en App Store y Google Play.'],
+        ['¿Cuánto cuesta un viaje?','La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas.'],
         ['¿Cómo verifican a los choferes?','Cada conductor pasa por verificación de cédula, licencia de moto, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy.'],
         ['¿Qué pasa si tengo una emergencia durante el viaje?','La app tiene un botón de pánico que alerta a soporte y a tus contactos de emergencia. Además puedes compartir tu ruta en vivo con familia para que vean dónde estás.'],
         ['¿Cómo se hace el pago?','Le pagas directamente al chofer vía Pago Móvil al llegar. Flashy te conecta — el cobro es entre tú y él, simple y sin vuelto.'],
-        ['Soy mototaxista, ¿cómo me uno?','Llena el formulario en esta página marcando "Soy mototaxista". Te contactamos para verificar tus documentos. Los primeros 30 días no cobramos comisión a los conductores fundadores.'],
-        ['¿Flashy llega a otras ciudades?','Empezamos en Puerto Cabello, pero el plan es expandirnos. Si quieres que llegue a tu ciudad, regístrate y déjanos tu zona — nos ayuda a priorizar.'],
+        ['Soy mototaxista, ¿cómo me uno?','Descarga la app y regístrate como conductor. Te contactamos para verificar tus documentos y comenzar a recibir viajes.'],
+        ['¿Flashy llega a otras ciudades?','Empezamos en Puerto Cabello, pero el plan es expandirnos a más ciudades de Venezuela pronto.'],
       ].map(([q,a]) => (
         <div class="faq-item">
           <button class="faq-btn" type="button" aria-expanded="false">
@@ -642,28 +578,26 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       ))}
     </div>
     <div class="section-cta" style="margin-top:48px">
-      <p class="section-cta-text">¿Todo claro? Asegura tu cupo.</p>
-      <button class="btn-primary btn-lg" data-scroll-form="pasajero">
-        Registrarme ahora →
-      </button>
+      <p class="section-cta-text">¿Todo claro? Descarga la app.</p>
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
+        Descargar Flashy →
+      </a>
     </div>
   </div>
 </section>
 
-<section class="section final-cta">
+<section id="descargar" class="section final-cta">
   <div class="final-cta-glow"></div>
   <div class="container final-cta-inner">
     <h2 class="final-title">
-      <span>NO ESPERES.</span>
+      <span>DESCARGA.</span>
       <span class="accent">LLEGA.</span>
     </h2>
-    <p class="final-sub">El 15 de mayo, Puerto Cabello cambia. Asegura tu lugar y tu 50% de descuento.</p>
-    <div class="final-spots">
-      <span class="spots-icon">🔥</span> Solo quedan <strong class="accent">{availableSpots}</strong> cupos · <strong>+{registeredCount}</strong> ya se registraron
-    </div>
-    <button class="btn-primary btn-xl" data-scroll-form="pasajero">
-      Reservar mi cupo ahora <span style="font-size:22px">→</span>
-    </button>
+    <p class="final-sub">Flashy ya está disponible en Puerto Cabello. Descarga la app y empieza a moverte.</p>
+    <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-xl">
+      Descargar Flashy ahora <span style="font-size:22px">→</span>
+    </a>
+    <p class="ios-badge">Próximamente en iOS</p>
   </div>
 </section>
 
@@ -683,7 +617,7 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
       <a href="#servicios" class="footer-link">Servicios</a>
       <a href="#seguridad" class="footer-link">Seguridad</a>
       <a href="#faq" class="footer-link">FAQ</a>
-      <a href="/acceso-prioritario" class="footer-link">Acceso Prioritario</a>
+
       <a href="/politica-de-privacidad" class="footer-link">Política de Privacidad</a>
     </div>
     <div>
@@ -1294,6 +1228,13 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
   }
   .final-title .accent { color: var(--accent); }
   .final-sub { font-size: 18px; color: var(--muted); margin: 0; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+  .ios-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 8px; padding: 8px 18px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; letter-spacing: 0.02em;
+  }
 
   /* ── Footer ── */
   .footer { background: var(--bg-soft); padding: 72px 0 40px; border-top: 1px solid var(--border); }
@@ -1475,18 +1416,6 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
 </style>
 
 <script is:inline>
-  // ── Countdown ──
-  const LAUNCH = new Date('2026-05-15T18:30:00-04:00');
-  function updateCountdown() {
-    const diff = Math.max(0, LAUNCH - new Date());
-    document.getElementById('cd-d').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
-    document.getElementById('cd-h').textContent = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
-    document.getElementById('cd-m').textContent = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
-    document.getElementById('cd-s').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-
   // ── Nav scroll ──
   const nav = document.getElementById('main-nav');
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
@@ -1531,85 +1460,5 @@ const availableSpots = import.meta.env.PUBLIC_AVAILABLE_SPOTS || '700';
         btn.setAttribute('aria-expanded', 'true');
       }
     });
-  });
-
-  // ── Form tabs ──
-  function setTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.querySelectorAll('.tab-panel').forEach(p => {
-      const isVisible = p.dataset.panel === tab;
-      p.classList.toggle('hidden', !isVisible);
-      
-      const input = p.querySelector('input');
-      if (input) {
-        if (isVisible && input.name === 'email') {
-          input.required = true;
-        } else {
-          input.required = false;
-        }
-      }
-    });
-    const submitBtn = document.getElementById('submit-btn');
-    if (submitBtn) submitBtn.textContent = tab === 'pasajero' ? 'Reclamar 50% OFF →' : 'Quiero ser conductor →';
-  }
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setTab(btn.dataset.tab)));
-
-  // ── Form submit ──
-  const form = document.getElementById('reg-form');
-  const submitBtnEl = document.getElementById('submit-btn');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const name = formData.get('nombre') || '';
-    const phone = formData.get('telefono') || '';
-    const email = formData.get('email') || '';
-    const zone = formData.get('zona') || '';
-    
-    const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
-    const interest = activeTab === 'pasajero' ? 'Pasajero' : 'Motorizado';
-
-    const originalText = submitBtnEl.textContent;
-    submitBtnEl.textContent = 'Enviando...';
-    submitBtnEl.disabled = true;
-
-    try {
-      const payload = { name, phone, email, interest, zone };
-      
-      const res = await fetch('/api/contacts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error('Error al enviar');
-
-      document.getElementById('form-fields').classList.add('hidden');
-      document.getElementById('form-success').classList.remove('hidden');
-
-      setTimeout(() => {
-        document.getElementById('form-fields').classList.remove('hidden');
-        document.getElementById('form-success').classList.add('hidden');
-        form.reset();
-      }, 5000);
-    } catch (error) {
-      console.error(error);
-      const formError = document.getElementById('form-error');
-      formError.classList.remove('hidden');
-      setTimeout(() => formError.classList.add('hidden'), 5000);
-    } finally {
-      submitBtnEl.textContent = originalText;
-      submitBtnEl.disabled = false;
-    }
-  });
-
-  // ── Scroll to form ──
-  function scrollToForm(tab) {
-    document.getElementById('dirA-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(() => setTab(tab), 400);
-  }
-  document.querySelectorAll('[data-scroll-form]').forEach(btn => {
-    btn.addEventListener('click', () => scrollToForm(btn.getAttribute('data-scroll-form')));
   });
 </script>
