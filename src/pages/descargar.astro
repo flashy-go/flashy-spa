@@ -1,0 +1,448 @@
+---
+import UmamiAnalytics from '../components/UmamiAnalytics.astro';
+
+const downloadUrl = process.env.PUBLIC_DOWNLOAD_URL ?? import.meta.env.PUBLIC_DOWNLOAD_URL ?? '#';
+---
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descargar Flashy — La app de mototaxis de Puerto Cabello</title>
+  <meta name="description" content="Descarga Flashy gratis en Google Play. La primera app de mototaxis de Puerto Cabello. Pide, súbete, llega." />
+  <link rel="canonical" href="https://flashygo.com/descargar" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#FF6A0D" />
+  <link rel="icon" type="image/png" href="/flashy-favicon.png" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Descargar Flashy — App de mototaxis" />
+  <meta property="og:description" content="Descarga Flashy gratis. La primera app de mototaxis de Puerto Cabello." />
+  <meta property="og:image" content="https://flashygo.com/og-flashy.png" />
+  <meta property="og:url" content="https://flashygo.com/descargar" />
+  <meta property="og:type" content="website" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <!-- Umami Analytics -->
+  <UmamiAnalytics />
+</head>
+<body>
+
+<div class="dl-page">
+  <!-- Background effects -->
+  <div class="dl-grid-bg"></div>
+  <div class="dl-glow dl-glow-1"></div>
+  <div class="dl-glow dl-glow-2"></div>
+
+  <!-- Floating speed lines -->
+  <div class="dl-speedline" style="top:12%;animation-delay:0s;animation-duration:3s"></div>
+  <div class="dl-speedline" style="top:28%;animation-delay:0.6s;animation-duration:3.4s"></div>
+  <div class="dl-speedline" style="top:55%;animation-delay:1.2s;animation-duration:2.8s"></div>
+  <div class="dl-speedline" style="top:72%;animation-delay:1.8s;animation-duration:3.2s"></div>
+  <div class="dl-speedline" style="top:88%;animation-delay:0.3s;animation-duration:2.6s"></div>
+
+  <!-- Floating particles -->
+  <div class="dl-particle" style="top:18%;left:12%;animation-delay:0s"></div>
+  <div class="dl-particle" style="top:72%;left:85%;animation-delay:1.2s"></div>
+  <div class="dl-particle" style="top:35%;left:78%;animation-delay:2.4s"></div>
+  <div class="dl-particle" style="top:85%;left:22%;animation-delay:0.8s"></div>
+  <div class="dl-particle" style="top:45%;left:5%;animation-delay:1.6s"></div>
+
+  <!-- Content -->
+  <div class="dl-content">
+    <!-- Logo -->
+    <a href="/" class="dl-logo" aria-label="Ir al inicio">
+      <img src="/flashy-word-logo.png" alt="Logo de Flashy" width="160" />
+    </a>
+
+    <!-- Badge -->
+    <div class="dl-badge">
+      <span class="dl-badge-dot"></span>
+      DISPONIBLE EN PUERTO CABELLO
+    </div>
+
+    <!-- Title -->
+    <h1 class="dl-title">
+      <span>DESCARGA</span>
+      <span class="dl-title-accent">FLASHY</span>
+    </h1>
+
+    <p class="dl-sub">
+      Tu mototaxi en minutos. <strong>Tarifa clara, chofer verificado.</strong><br />
+      Descarga la app y empieza a moverte.
+    </p>
+
+    <!-- Download buttons -->
+    <div class="dl-buttons">
+      <!-- Google Play Badge -->
+      <a href={downloadUrl} target="_blank" rel="noreferrer" class="dl-gplay-btn" id="download-google-play">
+        <div class="dl-gplay-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+            <path d="M3.609 1.814c-.236.255-.375.619-.375 1.072v18.228c0 .453.14.817.375 1.072l.056.054 10.217-10.217v-.046L3.665 1.76l-.056.054z" fill="#4285F4"/>
+            <path d="M17.288 15.43l-3.406-3.407v-.046l3.406-3.407.077.044 4.034 2.292c1.153.654 1.153 1.726 0 2.38l-4.034 2.292-.077.052z" fill="#FBBC04"/>
+            <path d="M17.365 15.378L13.882 11.977 3.609 22.186c.38.402.999.452 1.697.05l12.059-6.858" fill="#EA4335"/>
+            <path d="M17.365 8.576L5.306 1.764c-.698-.402-1.317-.352-1.697.05l10.273 10.163 3.483-3.401z" fill="#34A853"/>
+          </svg>
+        </div>
+        <div class="dl-gplay-text">
+          <span class="dl-gplay-label">DISPONIBLE EN</span>
+          <span class="dl-gplay-store">Google Play</span>
+        </div>
+      </a>
+
+      <!-- iOS Coming Soon -->
+      <div class="dl-ios-btn" id="download-ios-soon">
+        <div class="dl-ios-icon">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="white">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+        </div>
+        <div class="dl-ios-text">
+          <span class="dl-ios-label">PRÓXIMAMENTE EN</span>
+          <span class="dl-ios-store">App Store</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back link -->
+    <a href="/" class="dl-back">← Volver al inicio</a>
+  </div>
+</div>
+
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --accent:      #FF6A0D;
+    --accent-deep: #E8540A;
+    --bg:          #0A0A0B;
+    --bg-soft:     #111114;
+    --ink:         #FAFAF7;
+    --muted:       rgba(255,255,255,0.75);
+    --border:      rgba(255,255,255,0.08);
+    --font-body:   'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display:'Outfit', sans-serif;
+    --font-hero:   'Bebas Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* ── Page container ── */
+  .dl-page {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ── Background grid ── */
+  .dl-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 70%);
+  }
+
+  /* ── Glows ── */
+  .dl-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+  }
+  .dl-glow-1 {
+    top: -15%; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(255,106,13,0.2), transparent 60%);
+  }
+  .dl-glow-2 {
+    bottom: -25%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,106,13,0.08), transparent 55%);
+  }
+
+  /* ── Speed lines ── */
+  @keyframes dl-speed {
+    0%   { transform: translateX(-100%); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: translateX(120vw); opacity: 0; }
+  }
+  .dl-speedline {
+    position: absolute; left: 0; width: 40%; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255,106,13,0.4), transparent);
+    animation: dl-speed 3s ease-in infinite;
+  }
+
+  /* ── Floating particles ── */
+  @keyframes dl-float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+    50%      { transform: translateY(-20px) scale(1.3); opacity: 0.6; }
+  }
+  .dl-particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    pointer-events: none;
+    animation: dl-float 4s ease-in-out infinite;
+  }
+
+  /* ── Content ── */
+  .dl-content {
+    position: relative; z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    padding: 24px;
+    max-width: 640px;
+  }
+
+  /* ── Logo ── */
+  .dl-logo {
+    margin-bottom: 32px;
+    transition: opacity 0.2s;
+  }
+  .dl-logo:hover { opacity: 0.8; }
+  .dl-logo img { display: block; }
+
+  /* ── Badge ── */
+  @keyframes dl-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+  }
+  .dl-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 18px;
+    border: 1px solid rgba(255,106,13,0.35);
+    background: rgba(255,106,13,0.06);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .dl-badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    animation: dl-blink 1.5s steps(2) infinite;
+  }
+
+  /* ── Title ── */
+  @keyframes dl-fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .dl-title {
+    font-family: var(--font-hero);
+    font-size: clamp(52px, 10vw, 130px);
+    line-height: 0.85;
+    letter-spacing: 0.02em;
+    margin: 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: dl-fadeUp 0.8s ease-out both;
+  }
+  .dl-title-accent {
+    color: var(--accent);
+    animation: dl-fadeUp 0.8s ease-out 0.15s both;
+  }
+
+  /* ── Subtitle ── */
+  .dl-sub {
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 0 0 36px;
+    animation: dl-fadeUp 0.8s ease-out 0.3s both;
+  }
+  .dl-sub strong { color: var(--ink); font-weight: 600; }
+
+  /* ── Buttons container ── */
+  .dl-buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+    animation: dl-fadeUp 0.8s ease-out 0.45s both;
+  }
+
+  /* ── Google Play button ── */
+  .dl-gplay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 28px 12px 18px;
+    background: #000;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    color: var(--ink);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .dl-gplay-btn::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+    pointer-events: none;
+  }
+  .dl-gplay-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(255,106,13,0.25), 0 0 0 1px rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.4);
+  }
+  .dl-gplay-btn:active { transform: translateY(0); }
+
+  .dl-gplay-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .dl-gplay-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .dl-gplay-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .dl-gplay-store {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  /* ── iOS Coming Soon button ── */
+  .dl-ios-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 28px 12px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: var(--muted);
+    cursor: default;
+    position: relative;
+    opacity: 0.55;
+    transition: opacity 0.2s;
+  }
+  .dl-ios-btn:hover { opacity: 0.7; }
+
+  .dl-ios-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .dl-ios-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .dl-ios-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .dl-ios-store {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ── Back link ── */
+  .dl-back {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    transition: color 0.2s;
+    animation: dl-fadeUp 0.8s ease-out 0.6s both;
+  }
+  .dl-back:hover { color: var(--accent); }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .dl-logo img { width: 120px; }
+    .dl-logo { margin-bottom: 24px; }
+
+    .dl-title {
+      font-size: clamp(44px, 14vw, 80px);
+    }
+
+    .dl-sub {
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    .dl-buttons {
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .dl-gplay-btn,
+    .dl-ios-btn {
+      width: 100%;
+      max-width: 280px;
+      justify-content: center;
+    }
+
+    .dl-content {
+      padding: 20px;
+    }
+  }
+</style>
