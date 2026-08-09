@@ -1,8 +1,6 @@
 ---
 import UmamiAnalytics from '../components/UmamiAnalytics.astro';
 
-const downloadUrl = process.env.PUBLIC_DOWNLOAD_URL || '#';
-
 // Fetch registered users count from Directus
 const directusUrl = process.env.DIRECTUS_URL ?? process.env.PUBLIC_DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
 const directusToken = process.env.DIRECTUS_TOKEN ?? import.meta.env.DIRECTUS_TOKEN;
@@ -67,7 +65,7 @@ try {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD",
-      "description": "Descarga gratuita disponible en App Store y Google Play"
+      "description": "Descarga gratuita en Google Play. En iPhone se usa desde el navegador."
     },
     "areaServed": {
       "@type": "City",
@@ -117,7 +115,7 @@ try {
         "name": "¿Dónde descargo la app Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Flashy ya está disponible en Puerto Cabello. Descárgala gratis en App Store y Google Play."
+          "text": "Flashy ya está disponible en Puerto Cabello. Descárgala gratis en Google Play. Si tienes iPhone, la usas directo desde el navegador — sin instalar nada."
         }
       },
       {
@@ -189,7 +187,7 @@ try {
 
     </div>
     <div class="nav-actions">
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-sm nav-cta-desktop">Descargar →</a>
+      <a href="/descargar" class="btn-primary btn-sm nav-cta-desktop">Descargar <span class="btn-arrow">→</span></a>
       <button class="nav-hamburger" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
         <span class="ham-line"></span>
         <span class="ham-line"></span>
@@ -205,7 +203,7 @@ try {
   <a href="#seguridad" class="nav-mobile-link">Seguridad</a>
   <a href="#faq" class="nav-mobile-link">FAQ</a>
 
-  <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-full" style="margin-top:12px">Descargar →</a>
+  <a href="/descargar" class="btn-primary btn-full" style="margin-top:12px">Descargar <span class="btn-arrow">→</span></a>
 </div>
 
 <main id="main-content" aria-label="Contenido principal">
@@ -239,10 +237,10 @@ try {
       </p>
 
       <div class="hero-btns">
-        <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
-          Descargar Flashy <span>→</span>
+        <a href="/descargar" class="btn-primary btn-lg">
+          Descargar Flashy <span class="btn-arrow">→</span>
         </a>
-        <p class="ios-badge">Próximamente en iOS</p>
+        <a href="/descargar" class="ios-badge">¿iPhone? Úsala desde el navegador <span class="btn-arrow">→</span></a>
       </div>
 
       {registeredCount > 0 && (
@@ -307,8 +305,8 @@ try {
       </div>
     </div>
     <div class="section-cta">
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
-        Así de fácil. Descarga la app →
+      <a href="/descargar" class="btn-primary btn-lg">
+        Así de fácil. Descarga la app <span class="btn-arrow">→</span>
       </a>
     </div>
   </div>
@@ -400,9 +398,9 @@ try {
           <span class="accent italic">la parte más fácil de tu día</span>
         </p>
       </div>
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-block">
+      <a href="/descargar" class="btn-block">
         <span>Descargar Flashy ahora</span>
-        <span style="font-size:22px">→</span>
+        <span class="btn-arrow" style="font-size:22px">→</span>
       </a>
     </div>
   </div>
@@ -436,8 +434,8 @@ try {
   <div class="container" style="position:relative;">
     <div class="section-cta">
       <p class="section-cta-text">Tu seguridad es nuestra prioridad. Viaja tranquilo.</p>
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
-        Quiero viajar seguro →
+      <a href="/descargar" class="btn-primary btn-lg">
+        Quiero viajar seguro <span class="btn-arrow">→</span>
       </a>
     </div>
   </div>
@@ -510,8 +508,8 @@ try {
       </div>
     </div>
     <div class="section-cta">
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
-        Descarga la app →
+      <a href="/descargar" class="btn-primary btn-lg">
+        Descarga la app <span class="btn-arrow">→</span>
       </a>
     </div>
   </div>
@@ -531,7 +529,7 @@ try {
         <div class="stat-card reveal"><div class="stat-num">$</div><div class="stat-desc">pagos al instante, sin esperar semanas</div></div>
       </div>
       <a href="#conductores" class="btn-primary btn-lg">
-        Quiero ser conductor Flashy →
+        Quiero ser conductor Flashy <span class="btn-arrow">→</span>
       </a>
     </div>
     <div class="driver-benefits-card reveal">
@@ -558,7 +556,7 @@ try {
     </div>
     <div class="faq-list">
       {[
-        ['¿Dónde descargo la app?','Flashy ya está disponible en Puerto Cabello. Descárgala gratis en App Store y Google Play.'],
+        ['¿Dónde descargo la app?','Flashy ya está disponible en Puerto Cabello. Descárgala gratis en Google Play. Si tienes iPhone, la usas directo desde el navegador — sin instalar nada.'],
         ['¿Cuánto cuesta un viaje?','La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas.'],
         ['¿Cómo verifican a los choferes?','Cada conductor pasa por verificación de cédula, licencia de moto, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy.'],
         ['¿Qué pasa si tengo una emergencia durante el viaje?','La app tiene un botón de pánico que alerta a soporte y a tus contactos de emergencia. Además puedes compartir tu ruta en vivo con familia para que vean dónde estás.'],
@@ -579,8 +577,8 @@ try {
     </div>
     <div class="section-cta" style="margin-top:48px">
       <p class="section-cta-text">¿Todo claro? Descarga la app.</p>
-      <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-lg">
-        Descargar Flashy →
+      <a href="/descargar" class="btn-primary btn-lg">
+        Descargar Flashy <span class="btn-arrow">→</span>
       </a>
     </div>
   </div>
@@ -594,10 +592,10 @@ try {
       <span class="accent">LLEGA.</span>
     </h2>
     <p class="final-sub">Flashy ya está disponible en Puerto Cabello. Descarga la app y empieza a moverte.</p>
-    <a href={downloadUrl} target="_blank" rel="noreferrer" class="btn-primary btn-xl">
-      Descargar Flashy ahora <span style="font-size:22px">→</span>
+    <a href="/descargar" class="btn-primary btn-xl">
+      Descargar Flashy ahora <span class="btn-arrow" style="font-size:22px">→</span>
     </a>
-    <p class="ios-badge">Próximamente en iOS</p>
+    <a href="/descargar" class="ios-badge">¿iPhone? Úsala desde el navegador <span class="btn-arrow">→</span></a>
   </div>
 </section>
 
@@ -723,8 +721,41 @@ try {
     background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
     pointer-events: none;
   }
+  /* Brillo que barre el botón al pasar el mouse */
+  .btn-primary::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -80%; width: 60%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.45), transparent);
+    transform: skewX(-20deg); pointer-events: none;
+    transition: left 0.55s ease;
+  }
+  .btn-primary:hover::before { left: 140%; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(255,106,13,0.4); background: #FF7A25; }
   .btn-primary:active { transform: translateY(0); }
+
+  /* Glow pulsante — solo en los CTA grandes, el del nav (btn-sm) queda quieto.
+     En hover se apaga con `animation: none` (no `paused`): las keyframes ganan
+     sobre las reglas normales en la cascada, así que pausarla dejaría el
+     box-shadow congelado y el de :hover nunca se vería. */
+  @keyframes btn-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,106,13,0.35); }
+    50%      { box-shadow: 0 0 28px 4px rgba(255,106,13,0.35); }
+  }
+  .btn-primary.btn-lg,
+  .btn-primary.btn-xl { animation: btn-glow 2.8s ease-in-out infinite; }
+  .btn-primary:hover  { animation: none; }
+
+  /* Flecha que se desliza en hover */
+  .btn-arrow { display: inline-block; transition: transform 0.18s ease; }
+  .btn-primary:hover .btn-arrow,
+  .btn-block:hover .btn-arrow { transform: translateX(5px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary.btn-lg, .btn-primary.btn-xl { animation: none; }
+    .btn-primary::before { display: none; }
+    .btn-arrow { transition: none; }
+    .btn-primary:hover .btn-arrow,
+    .btn-block:hover .btn-arrow { transform: none; }
+  }
   .btn-sm  { padding: 12px 22px; font-size: 12px; }
   .btn-lg  { padding: 18px 28px; font-size: 13px; }
   .btn-xl  { padding: 22px 40px; font-size: 15px; }
@@ -1234,7 +1265,15 @@ try {
     font-size: 13px; font-weight: 600; color: var(--muted);
     background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
     border-radius: 8px; letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
+  a.ios-badge:hover {
+    color: var(--ink);
+    border-color: rgba(255,106,13,0.35);
+    background: rgba(255,106,13,0.06);
+  }
+  a.ios-badge:hover .btn-arrow { transform: translateX(4px); }
 
   /* ── Footer ── */
   .footer { background: var(--bg-soft); padding: 72px 0 40px; border-top: 1px solid var(--border); }
