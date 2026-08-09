@@ -8,8 +8,7 @@ ENV NODE_ENV=production
 # ---- Dependencies (incluye dev para build) ----
 FROM base AS deps
 COPY package.json package-lock.json ./
-RUN npm ci --include=dev --legacy-peer-deps && \
-    npm install --no-save --legacy-peer-deps @astrojs/node
+RUN npm ci --include=dev --legacy-peer-deps
 
 # ---- Build ----
 FROM base AS build
