@@ -1,5 +1,6 @@
 ---
 import UmamiAnalytics from '../components/UmamiAnalytics.astro';
+import StoreBadges from '../components/StoreBadges.astro';
 
 // Fetch registered users count from Directus
 const directusUrl = process.env.DIRECTUS_URL ?? process.env.PUBLIC_DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
@@ -237,10 +238,7 @@ try {
       </p>
 
       <div class="hero-btns">
-        <a href="/descargar" class="btn-primary btn-lg">
-          Descargar Flashy <span class="btn-arrow">→</span>
-        </a>
-        <a href="/descargar" class="ios-badge">¿iPhone? Úsala desde el navegador <span class="btn-arrow">→</span></a>
+        <StoreBadges location="hero" />
       </div>
 
       {registeredCount > 0 && (
@@ -592,10 +590,9 @@ try {
       <span class="accent">LLEGA.</span>
     </h2>
     <p class="final-sub">Flashy ya está disponible en Puerto Cabello. Descarga la app y empieza a moverte.</p>
-    <a href="/descargar" class="btn-primary btn-xl">
-      Descargar Flashy ahora <span class="btn-arrow" style="font-size:22px">→</span>
-    </a>
-    <a href="/descargar" class="ios-badge">¿iPhone? Úsala desde el navegador <span class="btn-arrow">→</span></a>
+    <div class="final-cta-btns">
+      <StoreBadges location="final" />
+    </div>
   </div>
 </section>
 
@@ -978,7 +975,7 @@ try {
   .cd-num.accent { color: var(--accent); }
   .cd-lbl { display: block; font-size: 10px; color: var(--muted); letter-spacing: 0.18em; font-weight: 700; margin-top: 6px; }
 
-  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .hero-btns { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
 
   .offer-badge {
     display: inline-flex; align-items: center; gap: 14px;
@@ -1259,21 +1256,10 @@ try {
   }
   .final-title .accent { color: var(--accent); }
   .final-sub { font-size: 18px; color: var(--muted); margin: 0; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
-  .ios-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 8px; padding: 8px 18px;
-    font-size: 13px; font-weight: 600; color: var(--muted);
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px; letter-spacing: 0.02em;
-    text-decoration: none;
-    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  .final-cta-btns {
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
   }
-  a.ios-badge:hover {
-    color: var(--ink);
-    border-color: rgba(255,106,13,0.35);
-    background: rgba(255,106,13,0.06);
-  }
-  a.ios-badge:hover .btn-arrow { transform: translateX(4px); }
 
   /* ── Footer ── */
   .footer { background: var(--bg-soft); padding: 72px 0 40px; border-top: 1px solid var(--border); }
@@ -1378,9 +1364,10 @@ try {
     .cd-num { font-size: 28px; }
     .cd-lbl { font-size: 9px; margin-top: 4px; }
 
-    .hero-btns { flex-direction: column; gap: 10px; width: 100%; }
-    .hero-btns .btn-lg { width: 100%; justify-content: center; }
-    .hero-btns .btn-outline { width: 100%; text-align: center; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.15); }
+    /* Las badges se estiran solas bajo 600px (StoreBadges.astro); acá solo
+       las apilamos y las centramos. */
+    .hero-btns { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .final-cta-btns { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 
     .offer-badge { flex-direction: column; text-align: center; gap: 8px; font-size: 11px; padding: 12px; line-height: 1.4; width: 100%; box-sizing: border-box; }
 
