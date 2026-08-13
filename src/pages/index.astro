@@ -16,34 +16,40 @@ try {
     registeredCount = Number(json.meta?.total_count) || 0;
   }
 } catch (_) {}
+
+const marqueeItems = ['MOTOTAXI Y TAXI','LLEGA EN 3 MINUTOS','TARIFA TRANSPARENTE','CONDUCTOR VERIFICADO','PAGO MÓVIL','HECHO EN VENEZUELA 🇻🇪','24/7'];
+// La cinta se anima con translateX(-50%), así que el track tiene que ser dos
+// mitades idénticas para que el loop no salte. Dos ciclos por mitad = ancho
+// suficiente para cubrir pantallas grandes.
+const marqueeTrack = [...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems];
 ---
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flashy — La primera app de mototaxis de Puerto Cabello</title>
-  <meta name="description" content="Pide, súbete, llega. La primera app de mototaxis de Puerto Cabello. Sin esperas, sin regateos, tarifa clara." />
+  <title>Flashy — La primera app de mototaxis y taxis de Puerto Cabello</title>
+  <meta name="description" content="Pide, súbete, llega. La primera app de mototaxis y taxis de Puerto Cabello. Moto o carro, sin esperas, sin regateos, tarifa clara." />
   <link rel="canonical" href="https://flashygo.com/flashy" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <meta name="keywords" content="mototaxi Puerto Cabello, app transporte Venezuela, Flashy app, mototaxi Carabobo, transporte urbano Puerto Cabello, pedir mototaxi Venezuela" />
+  <meta name="keywords" content="mototaxi Puerto Cabello, taxi Puerto Cabello, app de taxis Puerto Cabello, pedir taxi Venezuela, app transporte Venezuela, Flashy app, mototaxi Carabobo, taxi Carabobo, transporte urbano Puerto Cabello, pedir mototaxi Venezuela" />
   <meta name="theme-color" content="#FF6A0D" />
   <meta name="geo.region" content="VE-G" />
   <meta name="geo.placename" content="Puerto Cabello, Carabobo, Venezuela" />
   <link rel="icon" type="image/png" href="/flashy-favicon.png" />
   <!-- Open Graph -->
-  <meta property="og:title" content="Flashy — La primera app de mototaxis de Puerto Cabello" />
-  <meta property="og:description" content="Pide, súbete, llega. Sin esperas, sin regateos, tarifa clara. Descarga la app ahora." />
+  <meta property="og:title" content="Flashy — La primera app de mototaxis y taxis de Puerto Cabello" />
+  <meta property="og:description" content="Pide, súbete, llega. Moto o carro, sin esperas, sin regateos, tarifa clara. Descarga la app ahora." />
   <meta property="og:image" content="https://flashygo.com/og-flashy.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Flashy — App de mototaxis en Puerto Cabello, Venezuela" />
+  <meta property="og:image:alt" content="Flashy — App de mototaxis y taxis en Puerto Cabello, Venezuela" />
   <meta property="og:url" content="https://flashygo.com/flashy" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="es_VE" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Flashy — La primera app de mototaxis de Puerto Cabello" />
-  <meta name="twitter:description" content="Pide, súbete, llega. Sin esperas, sin regateos, tarifa clara." />
+  <meta name="twitter:title" content="Flashy — La primera app de mototaxis y taxis de Puerto Cabello" />
+  <meta name="twitter:description" content="Pide, súbete, llega. Moto o carro, sin esperas, sin regateos, tarifa clara." />
   <meta name="twitter:image" content="https://flashygo.com/og-flashy.png" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,7 +65,7 @@ try {
     "applicationSubCategory": "Ridesharing",
     "operatingSystem": "Android, iOS",
     "inLanguage": "es",
-    "description": "La primera app de mototaxis de Puerto Cabello. Pide, súbete, llega. Sin esperas, sin regateos, tarifa clara.",
+    "description": "La primera app de mototaxis y taxis de Puerto Cabello. Pide, súbete, llega. Moto o carro, sin esperas, sin regateos, tarifa clara.",
     "url": "https://flashygo.com",
     "datePublished": "2026-05-15",
     "offers": {
@@ -121,10 +127,18 @@ try {
       },
       {
         "@type": "Question",
+        "name": "¿Flashy tiene taxis además de mototaxis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. Desde la misma app pides mototaxi o taxi en carro. Al marcar tu destino eliges el tipo de vehículo y ves la tarifa de cada uno antes de confirmar el viaje."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "¿Cuánto cuesta un viaje con Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas."
+          "text": "La tarifa depende de la distancia y del vehículo que elijas — moto o carro — pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas."
         }
       },
       {
@@ -132,7 +146,7 @@ try {
         "name": "¿Cómo verifican a los choferes en Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Cada conductor pasa por verificación de cédula, licencia de moto, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy."
+          "text": "Cada conductor pasa por verificación de cédula, licencia de conducir — de moto o de carro, según el vehículo —, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy."
         }
       },
       {
@@ -153,10 +167,10 @@ try {
       },
       {
         "@type": "Question",
-        "name": "Soy mototaxista, ¿cómo me uno a Flashy?",
+        "name": "Soy mototaxista o taxista, ¿cómo me uno a Flashy?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Descarga la app y regístrate como conductor. Te contactamos para verificar tus documentos y comenzar a recibir viajes."
+          "text": "Descarga la app y regístrate como conductor, con tu moto o con tu carro. Te contactamos para verificar tus documentos y comenzar a recibir viajes."
         }
       },
       {
@@ -178,7 +192,7 @@ try {
 <nav id="main-nav" aria-label="Navegación principal">
   <div class="nav-inner container">
     <div class="nav-brand">
-      <img src="flashy-word-logo.png" alt="Logo de Flashy — app de mototaxis" width="150" />
+      <img src="flashy-word-logo.png" alt="Logo de Flashy — app de mototaxis y taxis" width="150" />
     </div>
     <div class="nav-links" id="nav-links">
       <a href="#como">Cómo funciona</a>
@@ -188,7 +202,9 @@ try {
 
     </div>
     <div class="nav-actions">
-      <a href="/descargar" class="btn-primary btn-sm nav-cta-desktop">Descargar <span class="btn-arrow">→</span></a>
+      <div class="nav-cta-desktop nav-badges">
+        <StoreBadges location="nav" size="sm" />
+      </div>
       <button class="nav-hamburger" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
         <span class="ham-line"></span>
         <span class="ham-line"></span>
@@ -204,7 +220,9 @@ try {
   <a href="#seguridad" class="nav-mobile-link">Seguridad</a>
   <a href="#faq" class="nav-mobile-link">FAQ</a>
 
-  <a href="/descargar" class="btn-primary btn-full" style="margin-top:12px">Descargar <span class="btn-arrow">→</span></a>
+  <div class="nav-mobile-badges">
+    <StoreBadges location="nav-mobile" />
+  </div>
 </div>
 
 <main id="main-content" aria-label="Contenido principal">
@@ -232,9 +250,9 @@ try {
       </h1>
 
       <p class="hero-sub">
-        La primera app de mototaxis de Puerto Cabello.
-        <strong>Sin esperas. Sin regateos. Sin sorpresas.</strong>
-        Tarifa clara, conductor verificado, llegada en minutos.
+        La primera app de mototaxis y taxis de Puerto Cabello.
+        <strong>Moto o carro, tú eliges.</strong>
+        Sin esperas, sin regateos: tarifa clara, conductor verificado, llegada en minutos.
       </p>
 
       <div class="hero-btns">
@@ -268,9 +286,7 @@ try {
 
 <div class="marquee-wrap">
   <div class="marquee-track">
-    {['LLEGA EN 3 MINUTOS','TARIFA TRANSPARENTE','CONDUCTOR VERIFICADO','PAGO MÓVIL','HECHO EN VENEZUELA 🇻🇪','24/7',
-      'LLEGA EN 3 MINUTOS','TARIFA TRANSPARENTE','CONDUCTOR VERIFICADO','PAGO MÓVIL','HECHO EN VENEZUELA 🇻🇪','24/7',
-      'LLEGA EN 3 MINUTOS','TARIFA TRANSPARENTE','CONDUCTOR VERIFICADO','PAGO MÓVIL','HECHO EN VENEZUELA 🇻🇪','24/7'].map(t => (
+    {marqueeTrack.map(t => (
       <span class="marquee-item">{t}<span class="marquee-dot"></span></span>
     ))}
   </div>
@@ -287,7 +303,7 @@ try {
         <div class="step-line"></div>
         <div class="step-num">PASO 01</div>
         <h3 class="step-title">Pide tu Flashy</h3>
-        <p class="step-desc">Abre la app, marca tu destino. Vemos al instante qué mototaxistas están más cerca de ti.</p>
+        <p class="step-desc">Abre la app, marca tu destino y elige moto o carro. Vemos al instante qué conductores están más cerca de ti.</p>
       </div>
       <div class="step reveal">
         <div class="step-line"></div>
@@ -303,9 +319,10 @@ try {
       </div>
     </div>
     <div class="section-cta">
-      <a href="/descargar" class="btn-primary btn-lg">
-        Así de fácil. Descarga la app <span class="btn-arrow">→</span>
-      </a>
+      <p class="section-cta-text">Así de fácil. Descarga la app y pide tu primer viaje.</p>
+      <div class="cta-badges">
+        <StoreBadges location="como" />
+      </div>
     </div>
   </div>
 </section>
@@ -316,14 +333,14 @@ try {
       <div>
         <div class="section-label">02 / EL CAMBIO</div>
         <h2 class="section-title" style="font-size:clamp(40px,6.5vw,96px);line-height:0.88">
-          Así pides<br/>una moto
+          Así pides<br/>una moto o un taxi
           <span style="text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:4px;opacity:0.55"> hoy.</span>
         </h2>
       </div>
       <div class="cambio-nota">
         <div class="section-label">NOTA DEL EDITOR</div>
         <p style="font-size:17px;color:var(--ink);line-height:1.55;margin:0">
-          En Puerto Cabello pedir un mototaxi seguía siendo igual que hace 20 años. <strong class="accent">Eso ya cambió.</strong>
+          En Puerto Cabello pedir un mototaxi o un taxi seguía siendo igual que hace 20 años. <strong class="accent">Eso ya cambió.</strong>
         </p>
       </div>
     </div>
@@ -367,7 +384,7 @@ try {
         </div>
         {[
           ['01','Abres la app','Desde donde estés. En la cama, en la oficina, bajo la lluvia.','4 seg'],
-          ['02','Marcas tu destino','Tarifa fija a la vista antes de pedir. Sin negociar, sin sorpresas.','8 seg'],
+          ['02','Eliges moto o carro','Marcas tu destino y ves la tarifa fija de cada opción antes de pedir. Sin negociar, sin sorpresas.','8 seg'],
           ['03','Llega tu Flashy','Carlos M. ★4.9, Yamaha BWS placa AB-123. Lo ves en el mapa.','3 min'],
           ['04','Te subes seguro','Tu familia ve la ruta en vivo. Botón de pánico siempre a un toque.','0 seg'],
           ['05','Pagas al chofer','Pago Móvil directo. Calificas y listo, próximo viaje.','2 seg'],
@@ -396,10 +413,12 @@ try {
           <span class="accent italic">la parte más fácil de tu día</span>
         </p>
       </div>
-      <a href="/descargar" class="btn-block">
-        <span>Descargar Flashy ahora</span>
-        <span class="btn-arrow" style="font-size:22px">→</span>
-      </a>
+      <div class="quote-badges">
+        <span class="quote-badges-label">Descarga Flashy ahora</span>
+        <div class="cta-badges">
+          <StoreBadges location="cambio" />
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -416,7 +435,7 @@ try {
     </div>
     <div class="security-cards-grid">
       {[
-        ['Verificación de cédula y licencia','Confirmamos que cada chofer es quien dice ser'],
+        ['Verificación de cédula y licencia','Confirmamos que cada chofer es quien dice ser, maneje moto o carro'],
         ['Antecedentes penales revisados','Sin excepciones. Sin atajos.'],
         ['Botón de pánico en el viaje','Alerta directa a contactos y soporte'],
         ['Comparte tu ruta en tiempo real','Tu familia ve el viaje completo'],
@@ -432,9 +451,9 @@ try {
   <div class="container" style="position:relative;">
     <div class="section-cta">
       <p class="section-cta-text">Tu seguridad es nuestra prioridad. Viaja tranquilo.</p>
-      <a href="/descargar" class="btn-primary btn-lg">
-        Quiero viajar seguro <span class="btn-arrow">→</span>
-      </a>
+      <div class="cta-badges">
+        <StoreBadges location="seguridad" />
+      </div>
     </div>
   </div>
 </section>
@@ -443,8 +462,8 @@ try {
   <div class="container">
     <div class="section-header">
       <div class="section-label">04 / ROADMAP</div>
-      <h2 class="section-title">Empezamos en moto.<br/><span class="accent italic">No paramos ahí.</span></h2>
-      <p class="section-desc" style="max-width:600px">Flashy es más que mototaxis. Es la nueva forma de moverte y resolver en Puerto Cabello.</p>
+      <h2 class="section-title">Moto y carro.<br/><span class="accent italic">No paramos ahí.</span></h2>
+      <p class="section-desc" style="max-width:600px">Flashy es más que mototaxis y taxis. Es la nueva forma de moverte y resolver en Puerto Cabello.</p>
     </div>
     <div class="roadmap">
       <div class="roadmap-line"></div>
@@ -464,10 +483,24 @@ try {
       </div>
 
       <div class="roadmap-phase reveal">
+        <div class="roadmap-dot roadmap-dot-active"><div class="roadmap-pulse"></div></div>
+        <div class="roadmap-meta">
+          <span class="roadmap-phase-label accent">FASE 02</span>
+          <span class="roadmap-status roadmap-status-active">AGOSTO 2026</span>
+        </div>
+        <h3 class="roadmap-title">Taxi</h3>
+        <div class="roadmap-tags">
+          {['Taxi en carro','Más espacio y equipaje','Tarifa clara antes de pedir','Pago Móvil al chofer'].map(s => (
+            <span class="roadmap-tag roadmap-tag-active">{s}</span>
+          ))}
+        </div>
+      </div>
+
+      <div class="roadmap-phase reveal">
         <div class="roadmap-dot"></div>
         <div class="roadmap-meta">
-          <span class="roadmap-phase-label">FASE 02</span>
-          <span class="roadmap-status">JUNIO 2026</span>
+          <span class="roadmap-phase-label">FASE 03</span>
+          <span class="roadmap-status">SEPTIEMBRE 2026</span>
         </div>
         <h3 class="roadmap-title">Flashy Para Ellas</h3>
         <div class="roadmap-tags">
@@ -480,12 +513,12 @@ try {
       <div class="roadmap-phase reveal">
         <div class="roadmap-dot"></div>
         <div class="roadmap-meta">
-          <span class="roadmap-phase-label">FASE 03</span>
-          <span class="roadmap-status">JUNIO 2026</span>
+          <span class="roadmap-phase-label">FASE 04</span>
+          <span class="roadmap-status">OCTUBRE 2026</span>
         </div>
-        <h3 class="roadmap-title">Taxi & Ejecutivo</h3>
+        <h3 class="roadmap-title">Ejecutivo & Aeropuerto</h3>
         <div class="roadmap-tags">
-          {['Taxis 4 ruedas','Plan ejecutivo','Reservas programadas','Aeropuerto'].map(s => (
+          {['Plan ejecutivo','Reservas programadas','Aeropuerto','Viajes de larga distancia'].map(s => (
             <span class="roadmap-tag">{s}</span>
           ))}
         </div>
@@ -494,8 +527,8 @@ try {
       <div class="roadmap-phase reveal">
         <div class="roadmap-dot"></div>
         <div class="roadmap-meta">
-          <span class="roadmap-phase-label">FASE 04</span>
-          <span class="roadmap-status">JULIO 2026</span>
+          <span class="roadmap-phase-label">FASE 05</span>
+          <span class="roadmap-status">NOVIEMBRE 2026</span>
         </div>
         <h3 class="roadmap-title">Delivery & Mandados</h3>
         <div class="roadmap-tags">
@@ -506,9 +539,10 @@ try {
       </div>
     </div>
     <div class="section-cta">
-      <a href="/descargar" class="btn-primary btn-lg">
-        Descarga la app <span class="btn-arrow">→</span>
-      </a>
+      <p class="section-cta-text">Mototaxi y taxi ya están activos. Lo demás viene en camino.</p>
+      <div class="cta-badges">
+        <StoreBadges location="roadmap" />
+      </div>
     </div>
   </div>
 </section>
@@ -517,22 +551,24 @@ try {
   <div class="drivers-bg"></div>
   <div class="container drivers-grid">
     <div>
-      <div class="section-label">05 / PARA MOTOTAXISTAS</div>
+      <div class="section-label">05 / PARA CONDUCTORES</div>
       <h2 class="section-title">Más viajes.<br/><span class="accent italic">Mejor pago.</span></h2>
-      <p class="section-desc">Si manejas mototaxi en Puerto Cabello, Flashy es tu próxima jugada. Más pasajeros, menos tiempo muerto, más reales.</p>
+      <p class="section-desc">Si manejas mototaxi o taxi en Puerto Cabello, Flashy es tu próxima jugada. Más pasajeros, menos tiempo muerto, más reales.</p>
       <div class="stats-grid">
         <div class="stat-card reveal"><div class="stat-num">+40%</div><div class="stat-desc">más viajes que esperando en la línea</div></div>
         <div class="stat-card reveal"><div class="stat-num">$0</div><div class="stat-desc">de comisión los primeros 30 días</div></div>
         <div class="stat-card reveal"><div class="stat-num">24/7</div><div class="stat-desc">tú decides cuándo prender la app</div></div>
         <div class="stat-card reveal"><div class="stat-num">$</div><div class="stat-desc">pagos al instante, sin esperar semanas</div></div>
       </div>
-      <a href="#conductores" class="btn-primary btn-lg">
-        Quiero ser conductor Flashy <span class="btn-arrow">→</span>
-      </a>
+      <p class="drivers-cta-text">Regístrate como conductor desde la app — moto o carro.</p>
+      <div class="cta-badges cta-badges-left">
+        <StoreBadges location="conductores" />
+      </div>
     </div>
     <div class="driver-benefits-card reveal">
       <div class="driver-benefits-title">¿Por qué Flashy?</div>
       <ul class="driver-benefits-list">
+        <li><span class="benefit-check">✓</span> Trabaja con tu moto o con tu carro</li>
         <li><span class="benefit-check">✓</span> Recibe viajes directamente — sin pelear por puesto</li>
         <li><span class="benefit-check">✓</span> Cobras al instante vía Pago Móvil</li>
         <li><span class="benefit-check">✓</span> $0 comisión tus primeros 30 días</li>
@@ -555,11 +591,12 @@ try {
     <div class="faq-list">
       {[
         ['¿Dónde descargo la app?','Flashy ya está disponible en Puerto Cabello. Descárgala gratis en Google Play. Si tienes iPhone, la usas directo desde el navegador — sin instalar nada.'],
-        ['¿Cuánto cuesta un viaje?','La tarifa depende de la distancia, pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas.'],
-        ['¿Cómo verifican a los choferes?','Cada conductor pasa por verificación de cédula, licencia de moto, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy.'],
+        ['¿Flashy tiene taxis además de mototaxis?','Sí. Desde la misma app pides mototaxi o taxi en carro. Al marcar tu destino eliges el tipo de vehículo y ves la tarifa de cada uno antes de confirmar el viaje.'],
+        ['¿Cuánto cuesta un viaje?','La tarifa depende de la distancia y del vehículo que elijas — moto o carro — pero siempre la ves antes de confirmar el viaje. Cero regateo, cero sorpresas.'],
+        ['¿Cómo verifican a los choferes?','Cada conductor pasa por verificación de cédula, licencia de conducir — de moto o de carro, según el vehículo —, antecedentes penales y revisión del vehículo. Solo los aprobados manejan en Flashy.'],
         ['¿Qué pasa si tengo una emergencia durante el viaje?','La app tiene un botón de pánico que alerta a soporte y a tus contactos de emergencia. Además puedes compartir tu ruta en vivo con familia para que vean dónde estás.'],
         ['¿Cómo se hace el pago?','Le pagas directamente al chofer vía Pago Móvil al llegar. Flashy te conecta — el cobro es entre tú y él, simple y sin vuelto.'],
-        ['Soy mototaxista, ¿cómo me uno?','Descarga la app y regístrate como conductor. Te contactamos para verificar tus documentos y comenzar a recibir viajes.'],
+        ['Soy mototaxista o taxista, ¿cómo me uno?','Descarga la app y regístrate como conductor, con tu moto o con tu carro. Te contactamos para verificar tus documentos y comenzar a recibir viajes.'],
         ['¿Flashy llega a otras ciudades?','Empezamos en Puerto Cabello, pero el plan es expandirnos a más ciudades de Venezuela pronto.'],
       ].map(([q,a]) => (
         <div class="faq-item">
@@ -575,9 +612,9 @@ try {
     </div>
     <div class="section-cta" style="margin-top:48px">
       <p class="section-cta-text">¿Todo claro? Descarga la app.</p>
-      <a href="/descargar" class="btn-primary btn-lg">
-        Descargar Flashy <span class="btn-arrow">→</span>
-      </a>
+      <div class="cta-badges">
+        <StoreBadges location="faq" />
+      </div>
     </div>
   </div>
 </section>
@@ -589,7 +626,7 @@ try {
       <span>DESCARGA.</span>
       <span class="accent">LLEGA.</span>
     </h2>
-    <p class="final-sub">Flashy ya está disponible en Puerto Cabello. Descarga la app y empieza a moverte.</p>
+    <p class="final-sub">Flashy ya está disponible en Puerto Cabello. Mototaxi o taxi, en la misma app: descárgala y empieza a moverte.</p>
     <div class="final-cta-btns">
       <StoreBadges location="final" />
     </div>
@@ -602,9 +639,9 @@ try {
   <div class="container footer-grid">
     <div>
       <div class="footer-brand">
-        <img src="flashy-word-logo.png" alt="Logo de Flashy — app de mototaxis" width="150" />
+        <img src="flashy-word-logo.png" alt="Logo de Flashy — app de mototaxis y taxis" width="150" />
       </div>
-      <p class="footer-about">La primera app de mototaxis hecha en Puerto Cabello, para Puerto Cabello. Y desde aquí, para toda Venezuela.</p>
+      <p class="footer-about">La primera app de mototaxis y taxis hecha en Puerto Cabello, para Puerto Cabello. Y desde aquí, para toda Venezuela.</p>
     </div>
     <div>
       <div class="footer-col-title">NAVEGACIÓN</div>
@@ -834,6 +871,24 @@ try {
     font-size: 16px; color: var(--muted);
     line-height: 1.5;
   }
+
+  /* ── Pares de badges de tienda (mismo trato que en el hero) ── */
+  .cta-badges {
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .cta-badges-left { justify-content: flex-start; }
+
+  .nav-badges { display: flex; align-items: center; gap: 10px; }
+  .nav-mobile-badges { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+  .quote-badges { display: flex; flex-direction: column; gap: 14px; }
+  .quote-badges-label {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent);
+  }
+
+  .drivers-cta-text { font-size: 15px; color: var(--muted); margin-bottom: 14px; }
 
   /* ── Spots Badge ── */
   .spots-badge {

@@ -6,10 +6,16 @@
 // `location` sólo alimenta data-umami-event, para distinguir desde qué
 // bloque se hizo clic. Se usan atributos de Umami en vez de `id` porque el
 // componente se repite varias veces en la misma página.
+//
+// `size="sm"` es la versión compacta para la barra de navegación: mismo par
+// de badges, sin la línea superior ("DISPONIBLE EN"), para que quepan junto
+// al logo y los enlaces.
 interface Props {
   location?: string;
+  size?: 'md' | 'sm';
 }
-const { location = 'page' } = Astro.props;
+const { location = 'page', size = 'md' } = Astro.props;
+const sizeClass = size === 'sm' ? 'store-badge store-badge-sm' : 'store-badge';
 
 const downloadUrl = process.env.PUBLIC_DOWNLOAD_URL ?? import.meta.env.PUBLIC_DOWNLOAD_URL ?? '#';
 const iosWebUrl = process.env.PUBLIC_IOS_WEB_URL ?? import.meta.env.PUBLIC_IOS_WEB_URL ?? 'https://app.flashygo.com';
@@ -19,7 +25,7 @@ const iosWebUrl = process.env.PUBLIC_IOS_WEB_URL ?? import.meta.env.PUBLIC_IOS_W
   href={downloadUrl}
   target="_blank"
   rel="noreferrer"
-  class="store-badge"
+  class={sizeClass}
   data-umami-event={`download-google-play-${location}`}
 >
   <span class="store-badge-icon">
@@ -38,7 +44,7 @@ const iosWebUrl = process.env.PUBLIC_IOS_WEB_URL ?? import.meta.env.PUBLIC_IOS_W
 
 <a
   href={iosWebUrl}
-  class="store-badge"
+  class={sizeClass}
   data-umami-event={`download-ios-web-${location}`}
 >
   <span class="store-badge-icon">
@@ -110,6 +116,13 @@ const iosWebUrl = process.env.PUBLIC_IOS_WEB_URL ?? import.meta.env.PUBLIC_IOS_W
     line-height: 1.15;
     color: var(--ink);
   }
+
+  /* Variante compacta (nav): sólo icono + nombre de la tienda. */
+  .store-badge-sm { gap: 9px; padding: 8px 14px; border-radius: 9px; }
+  .store-badge-sm .store-badge-icon svg { width: 20px; height: 20px; }
+  .store-badge-sm .store-badge-label { display: none; }
+  .store-badge-sm .store-badge-name { font-size: 15px; }
+  .store-badge-sm:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,106,13,0.22); }
 
   @media (max-width: 600px) {
     .store-badge {

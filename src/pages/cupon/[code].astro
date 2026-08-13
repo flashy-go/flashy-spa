@@ -1,5 +1,6 @@
 ---
 import UmamiAnalytics from '../../components/UmamiAnalytics.astro';
+import StoreBadges from '../../components/StoreBadges.astro';
 
 export const prerender = false;
 
@@ -25,7 +26,7 @@ if (!coupon) Astro.response.status = 404;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{coupon ? `Cupón ${coupon.code} — 50% OFF en Flashy` : 'Cupón no encontrado — Flashy'}</title>
   <meta name="description" content={coupon
-    ? `${coupon.business_reference ? `Cupón cortesía de ${coupon.business_reference}. ` : ''}Obtén 50% de descuento en tu primer viaje con Flashy, la app de mototaxis de Puerto Cabello.`
+    ? `${coupon.business_reference ? `Cupón cortesía de ${coupon.business_reference}. ` : ''}Obtén 50% de descuento en tu primer viaje con Flashy, la app de mototaxis y taxis de Puerto Cabello.`
     : 'Este cupón no es válido o ya venció.'
   } />
   <meta name="robots" content="noindex, nofollow" />
@@ -65,7 +66,7 @@ if (!coupon) Astro.response.status = 404;
     <div class="meta-row">
       <div class="badge-pill">
         <span class="badge-dot"></span>
-        LANZAMIENTO 15 MAYO 2026
+        DISPONIBLE EN PUERTO CABELLO
       </div>
       {coupon.business_reference && (
         <div class="courtesy-pill">
@@ -87,7 +88,7 @@ if (!coupon) Astro.response.status = 404;
             <span class="ticket-code-label">TU CÓDIGO</span>
             <span class="ticket-code">{coupon.code}</span>
           </div>
-          <span class="ticket-valid">Válido desde el 15 de mayo · 2026</span>
+          <span class="ticket-valid">Válido en tu primer viaje · moto o carro</span>
         </div>
 
         <!-- PERFORATED DIVIDER -->
@@ -118,13 +119,13 @@ if (!coupon) Astro.response.status = 404;
     <div class="form-header">
       <div class="form-code-badge">{coupon.code} · 50% OFF</div>
       <h2 class="form-title">Activa tu cupón</h2>
-      <p class="form-sub">Regístrate gratis · te avisamos por WhatsApp el 15 de mayo</p>
+      <p class="form-sub">Regístrate gratis · te escribimos por WhatsApp para activarlo</p>
     </div>
 
     <form id="reg-form" class="reg-form">
       <div class="form-tabs">
         <button type="button" class="tab-btn active" data-tab="pasajero">Soy pasajero</button>
-        <button type="button" class="tab-btn" data-tab="chofer">Soy mototaxista</button>
+        <button type="button" class="tab-btn" data-tab="chofer">Soy conductor</button>
       </div>
 
       <div id="form-fields">
@@ -141,6 +142,13 @@ if (!coupon) Astro.response.status = 404;
           <input class="form-input" name="zona" placeholder="Ej: Centro, La Belisa, Cumboto..." />
         </div>
         <div class="form-group tab-panel form-hidden" data-panel="chofer">
+          <label class="form-label">¿Con qué trabajas?</label>
+          <select class="form-input form-select" name="vehiculo">
+            <option value="moto">Moto — mototaxi</option>
+            <option value="carro">Carro — taxi</option>
+          </select>
+        </div>
+        <div class="form-group tab-panel form-hidden" data-panel="chofer">
           <label class="form-label">Email</label>
           <input class="form-input" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
         </div>
@@ -148,7 +156,7 @@ if (!coupon) Astro.response.status = 404;
         <button type="submit" class="btn-submit" id="submit-btn">
           Reclamar cupón →
         </button>
-        <p class="form-disclaimer">🔒 Solo te escribimos para el lanzamiento</p>
+        <p class="form-disclaimer">🔒 Solo te escribimos por temas de tu cupón</p>
         <div id="form-error" class="form-error form-hidden">
           ⚠️ Hubo un problema. Por favor intenta de nuevo.
         </div>
@@ -157,7 +165,10 @@ if (!coupon) Astro.response.status = 404;
       <div id="form-success" class="form-success form-hidden">
         <div class="success-icon">🎟️</div>
         <div class="success-title">¡Cupón aplicado con éxito!</div>
-        <div class="success-sub">A partir del 15 de mayo podrás utilizarlo en tu primer viaje con Flashy.</div>
+        <div class="success-sub">Descarga la app y úsalo en tu primer viaje con Flashy, en moto o en carro.</div>
+        <div class="success-badges">
+          <StoreBadges location="cupon-success" />
+        </div>
       </div>
     </form>
   </div>
@@ -455,6 +466,10 @@ if (!coupon) Astro.response.status = 404;
   }
   .form-input:focus { border-color: var(--accent); background: rgba(255,106,13,0.04); }
   .form-input::placeholder { color: rgba(255,255,255,0.22); }
+  /* El desplegable nativo hereda el fondo del sistema: forzamos el tema oscuro
+     para que las opciones no salgan en blanco sobre blanco. */
+  .form-select { appearance: none; cursor: pointer; color-scheme: dark; }
+  .form-select option { background: var(--bg-soft); color: #fff; }
   .btn-submit {
     width: 100%; padding: 16px 24px; margin-top: 4px;
     background: var(--accent); color: #0A0A0B;
@@ -482,6 +497,10 @@ if (!coupon) Astro.response.status = 404;
   .success-icon { font-size: 44px; }
   .success-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--ink); }
   .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 320px; }
+  .success-badges {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; margin-top: 8px; width: 100%;
+  }
 
   /* ── 404 VIEW ── */
   .not-found {
@@ -578,7 +597,11 @@ if (!coupon) Astro.response.status = 404;
       const zone    = fd.get('zona')     || '';
       const cupon   = fd.get('cupon')    || '';
       const tab     = document.querySelector('.tab-btn.active').dataset.tab;
-      const interest = tab === 'pasajero' ? 'Pasajero' : 'Motorizado';
+      // Los conductores se distinguen por vehículo: 'Motorizado' (moto) o
+      // 'Taxista' (carro). El campo interest en Directus es texto libre.
+      const interest = tab === 'pasajero'
+        ? 'Pasajero'
+        : (fd.get('vehiculo') === 'carro' ? 'Taxista' : 'Motorizado');
 
       const orig = submitBtn.textContent;
       submitBtn.textContent = 'Enviando...';

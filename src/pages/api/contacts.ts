@@ -12,8 +12,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  if (body.interest === 'Motorizado' && !body.email) {
-    return new Response(JSON.stringify({ error: 'El email es obligatorio para registrarse como motorizado.' }), {
+  if ((body.interest === 'Motorizado' || body.interest === 'Taxista') && !body.email) {
+    return new Response(JSON.stringify({ error: 'El email es obligatorio para registrarse como conductor.' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
